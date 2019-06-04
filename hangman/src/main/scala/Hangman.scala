@@ -63,15 +63,18 @@ class Hangman {
           if(suitableReplacementExists(guess, words)){
             val filteredWords = filterWords(words, doesNotContainCharacterFilter(guess))
             val newHiddenWord = filteredWords(rand.nextInt(filteredWords.length))
+            printHangMan(lives - 1)
             playTurn(newHiddenWord, answer, filteredWords, filteredOptions, lives - 1, rand, player)
           } else {
             val indexes = 0.until(hiddenWord.length).filter(hiddenWord.charAt(_) == guess)
             val filteredWords = keepWordsWithGuessCharacterAtIndexes(words, indexes, guess)
             val newAnswer = updateAnswer(answer, guess, indexes)
+            printHangMan(lives)
             playTurn(hiddenWord, newAnswer, filteredWords, filteredOptions, lives, rand, player)
           }
         } else {
           val filteredWords = filterWords(words, doesNotContainCharacterFilter(guess))
+          printHangMan(lives - 1)
           playTurn(hiddenWord, answer, filteredWords, filteredOptions, lives - 1, rand, player)
         }
       }
@@ -106,6 +109,103 @@ class Hangman {
   def suitableReplacementExists(guess: Char, words: Seq[String]): Boolean = {
     filterWords(words, doesNotContainCharacterFilter(guess)).nonEmpty
   }
+
+  def printHangMan(lives: Int): Unit ={
+    val hangman = lives match  {
+      case 9 =>
+        """
+          |
+          |
+          |
+          |
+          |
+          |____
+        """.stripMargin
+      case 8 =>
+        """
+          |
+          |  |
+          |  |
+          |  |
+          |  |
+          |__|__
+        """.stripMargin
+      case 7 =>
+        """
+          |   ______
+          |  |
+          |  |
+          |  |
+          |  |
+          |__|__
+        """.stripMargin
+      case 6 =>
+        """
+          |   ______
+          |  |      |
+          |  |
+          |  |
+          |  |
+          |__|__
+        """.stripMargin
+      case 5 =>
+        """
+          |   ______
+          |  |      |
+          |  |      O
+          |  |
+          |  |
+          |__|__
+        """.stripMargin
+      case 4 =>
+        """
+          |   ______
+          |  |      |
+          |  |      O
+          |  |      |
+          |  |
+          |__|__
+        """.stripMargin
+      case 3 =>
+        """
+          |   ______
+          |  |      |
+          |  |      O
+          |  |      |-
+          |  |
+          |__|__
+        """.stripMargin
+      case 2 =>
+        """
+          |   ______
+          |  |      |
+          |  |      O
+          |  |     -|-
+          |  |
+          |__|__
+        """.stripMargin
+      case 1 =>
+        """
+          |   ______
+          |  |      |
+          |  |      O
+          |  |     -|-
+          |  |       \
+          |__|__
+        """.stripMargin
+      case 0 =>
+        """
+          |   ______
+          |  |      |
+          |  |      O
+          |  |     -|-
+          |  |     / \
+          |__|__
+        """.stripMargin
+    }
+    println(hangman)
+  }
+
 
 }
 
