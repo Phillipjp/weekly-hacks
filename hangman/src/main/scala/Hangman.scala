@@ -26,9 +26,6 @@ class Hangman {
     current.charAt(index) == character
   }
 
-  def containsCharacterFilter(character: Char)(current: String): Boolean = {
-    current.contains(character)
-  }
   def keepWordsWithGuessCharacterAtIndexes(words: Seq[String], indexes: Seq[Int], guess: Char): Seq[String] = {
     if(indexes.isEmpty){
       words
@@ -37,7 +34,6 @@ class Hangman {
       keepWordsWithGuessCharacterAtIndexes(filterWords(words, characterAtIndexFilter(guess, indexes.head)), indexes.drop(1), guess)
     }
   }
-
 
   def doesNotContainCharacterFilter(character: Char)(current: String): Boolean = {
     !current.contains(character)
@@ -64,7 +60,7 @@ class Hangman {
         val filteredOptions = filterWords(options, exactWordFilter(guess.toString))
 
         if(hiddenWord.contains(guess)){
-          if(suitableReplacement(guess, words)){
+          if(suitableReplacementExists(guess, words)){
             val filteredWords = filterWords(words, doesNotContainCharacterFilter(guess))
             val newHiddenWord = filteredWords(rand.nextInt(filteredWords.length))
             playTurn(newHiddenWord, answer, filteredWords, filteredOptions, lives - 1, rand, player)
@@ -107,7 +103,7 @@ class Hangman {
       .mkString
   }
 
-  def suitableReplacement(guess: Char, words: Seq[String]): Boolean = {
+  def suitableReplacementExists(guess: Char, words: Seq[String]): Boolean = {
     filterWords(words, doesNotContainCharacterFilter(guess)).nonEmpty
   }
 
@@ -119,7 +115,7 @@ object Hangman{
     val hangman = new Hangman
     val words = Util.readInVocab[String]("src/main/resources/words.txt")
     val rand = new Random()
-    val computer = ComputerPLayer(rand)
+    val computerPlayer = ComputerPLayer(rand)
     val humanPlayer = new HumanPlayer()
     hangman.hangman(words, rand, hangman.OPTIONS, humanPlayer)
   }
