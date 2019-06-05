@@ -48,7 +48,7 @@ class Hangman {
 
     val hiddenWord = pickRandomWord(words, rand)
     val filteredWords = filterWords(filterWords(words, exactWordFilter(hiddenWord)), wordLengthFilter(hiddenWord.length))
-    val answer = Stream.continually("-").take(hiddenWord.length).mkString
+    val answer = Stream.continually("_").take(hiddenWord.length).mkString
 
     def playTurn(hiddenWord: String, answer: String, words: Seq[String], options: Seq[String], lives: Int, rand: Random, player: Player): Result = {
       if(answer == hiddenWord){
@@ -85,7 +85,8 @@ class Hangman {
 
   private def makeGuess(answer: String, options: Seq[String], lives: Int, player: Player) = {
     println(s"LIVES: $lives")
-    println(answer)
+    answer.foreach(c => print(s" $c "))
+    println()
     println("Make a guess")
     val guess = player.makeGuess(options)
     println(s"GUESS: $guess")
