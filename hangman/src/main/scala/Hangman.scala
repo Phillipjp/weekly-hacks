@@ -1,4 +1,5 @@
 import scala.util.Random
+import WordFilter._
 
 case class Result(result: String, guess: String, answer: String, lives: Int)
 
@@ -8,35 +9,6 @@ class Hangman {
 
   def pickRandomWord(words: Seq[String], random: Random): String = {
     words(random.nextInt(words.length))
-  }
-
-  def filterWords(words: Seq[String], condition: String => Boolean): Seq[String] ={
-    words.filter(condition(_))
-  }
-
-  def exactWordFilter(word: String)(current: String): Boolean = {
-    current != word
-  }
-
-  def wordLengthFilter(length: Int)(current: String): Boolean = {
-    current.length == length
-  }
-
-  def characterAtIndexFilter(character: Char, index: Int)(current: String): Boolean = {
-    current.charAt(index) == character
-  }
-
-  def keepWordsWithGuessCharacterAtIndexes(words: Seq[String], indexes: Seq[Int], guess: Char): Seq[String] = {
-    if(indexes.isEmpty){
-      words
-    }
-    else{
-      keepWordsWithGuessCharacterAtIndexes(filterWords(words, characterAtIndexFilter(guess, indexes.head)), indexes.drop(1), guess)
-    }
-  }
-
-  def doesNotContainCharacterFilter(character: Char)(current: String): Boolean = {
-    !current.contains(character)
   }
 
   def guessCharacter(options: Seq[String], rand: Random): Char = {
@@ -216,8 +188,11 @@ object Hangman{
     val hangman = new Hangman
     val words = Util.readInVocab[String]("src/main/resources/words.txt")
     val rand = new Random()
-    val computerPlayer = ComputerPLayer(rand)
+    val computerPlayer = LetterFrequencyComputerPlayer()
     val humanPlayer = new HumanPlayer()
-    hangman.hangman(words, rand, hangman.OPTIONS, humanPlayer)
+    val options =  Seq('e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w', 'f', 'g', 'y', 'p', 'b', 'v', 'k', 'j', 'x', 'q', 'z')
+        .map(_.toString)
+
+    hangman.hangman(words, rand, options, computerPlayer)
   }
 }

@@ -1,4 +1,5 @@
 import scala.util.Random
+import WordFilter._
 
 trait Player {
 
@@ -27,4 +28,15 @@ case class ComputerPLayer(rand: Random) extends Player{
   override def makeGuess(options: Seq[String]): Char = {
     options(rand.nextInt(options.length)).charAt(0)
   }
+}
+
+case class LetterFrequencyComputerPlayer() extends Player{
+
+  override def makeGuess(options: Seq[String]): Char = {
+    options.head.head
+  }
+}
+
+case class WordDictionaryComputerPlayer(rand: Random) extends Player{
+  override def makeGuess(options: Seq[String]): Char = ???
 }
