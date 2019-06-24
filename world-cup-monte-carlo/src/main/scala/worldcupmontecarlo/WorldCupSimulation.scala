@@ -4,24 +4,24 @@ import scala.util.Random
 
 class WorldCupSimulation {
 
-  def simulateRound(teams: Seq[Team]): Seq[Team] ={
-    teams.sliding(2,2).map((teams: Seq[Team]) => Fixture(teams.head, teams.last).simulateMatch()).toSeq
+  def simulateRound(teams: Seq[Team], random: Random): Seq[Team] ={
+    teams.sliding(2,2).map((teams: Seq[Team]) => Fixture(teams.head, teams.last).simulateMatch(random)).toSeq
   }
 
-  def simulateTournament(teams: Seq[Team]): Team ={
+  def simulateTournament(teams: Seq[Team], random: Random): Team ={
     if(teams.length == 1)
       teams.head
     else {
-      val teamsLeft = simulateRound(teams)
-      simulateTournament(teamsLeft)
+      val teamsLeft = simulateRound(teams, random)
+      simulateTournament(teamsLeft, random)
     }
   }
 
-  def simulateWorldCup(teams: Seq[Team], simulations: Int): Team = {
+  def simulateWorldCup(teams: Seq[Team], simulations: Int, random: Random): Team = {
     Stream.continually(teams)
       .take(simulations)
-      .map(simulateTournament)
-      .groupBy{case team => team}
+      .map(simulateTournament(_, random))
+      .groupBy(team => team)
       .mapValues(_.size)
       .maxBy{case (_, wins) => wins}
       ._1
@@ -34,9 +34,9 @@ case class Team(name: String, rating: Int)
 
 case class Fixture(teamA: Team, teamB: Team){
 
-  def simulateMatch(): Team ={
+  def simulateMatch(random: Random): Team ={
     val probA = winProbability(teamA.rating, teamB.rating)
-    val rand = Random.nextDouble()
+    val rand = random.nextDouble()
     if(rand > probA)
       teamB
     else
@@ -71,7 +71,7 @@ object WorldCupSimulation {
       Team("Canada", 2006)
     )
     val worldCup = new WorldCupSimulation
-    val winner = worldCup.simulateWorldCup(teams, 1000000)
+    val winner = worldCup.simulateWorldCup(teams, 1000000, new Random())
     println(winner)
   }
 }
