@@ -31,30 +31,31 @@ class WorldCupSimulation {
     }
   }
 
-  def simulateWorldCup(teams: Seq[Team], simulations: Int, random: Random): Team = {
+  def simulateWorldCup(teams: Seq[Team], simulations: Int, random: Random):  Map[Team, Int] = {
     Stream.continually(teams)
       .take(simulations)
       .map(simulateTournament(_, random))
       .groupBy(team => team)
       .mapValues(_.size)
+  }
+
+  def getWinner(results: Map[Team, Int]): Team = {
+    results
       .maxBy{case (_, wins) => wins}
       ._1
   }
 
-  def calculateOdds(teams: Seq[Team], simulations: Int, random: Random):  Seq[(String, String)] = {
-    Stream.continually(teams)
-      .take(simulations)
-      .map(simulateTournament(_, random))
-      .groupBy(team => team)
-      .mapValues(wins => odds.fractional(wins.size, simulations))
+  def calculateOdds(results: Map[Team, Int]):  Seq[(String, Odds)] = {
+    val total = results.values.sum
+    results
+      .mapValues(wins => Odds(wins, total))
       .toSeq
       .map{ case (team, odds) => (team.name, odds)}
-      .sortBy{ case (_, fraction) => -odds.fractionalToDecimal(fraction)}
-
+      .sortBy{ case (_, odds) => -odds.decimal()}
   }
 }
 
-object odds {
+case class Odds(numerator: Int, denominator: Int) {
 
   private def calculateGCD(a: Int, b: Int): Int = {
     if(a == 0)
@@ -65,25 +66,21 @@ object odds {
       calculateGCD(b, a % b)
   }
 
-  def fractional(a: Int, b: Int): String = {
+  private def normalise(): String = {
 
-    val gcd = calculateGCD(a, b)
-    val numerator = a/gcd
-    val denominator = b/gcd
+    val gcd = calculateGCD(numerator , denominator)
+    val normalisedNumerator = numerator/gcd
+    val normalisedDenominator = denominator/gcd
 
-    numerator + "/" + denominator
+    normalisedNumerator + "/" + normalisedDenominator
   }
 
-  def decimal(numerator: Double, denominator: Double): Double = {
-    numerator/denominator
+  def decimal(): Double = {
+    numerator.toDouble/denominator.toDouble
   }
 
-  def fractionalToDecimal(fraction: String): Double = {
-    val numerator = fraction.split("/").head.toDouble
-    val denominator = fraction.split("/").last.toDouble
-
-    decimal(numerator, denominator)
-
+  override def toString: String = {
+    normalise()
   }
 }
 
@@ -110,10 +107,11 @@ object WorldCupSimulation {
       Team("Canada", 2006)
     )
     val worldCup = new WorldCupSimulation
-    val winner = worldCup.simulateWorldCup(teams, 1000000, new Random())
+    val results = worldCup.simulateWorldCup(teams, 1000000, new Random())
+    val winner = worldCup.getWinner(results)
     println(winner)
     println()
-    val odds = worldCup.calculateOdds(teams, 1000000, new Random())
+    val odds = worldCup.calculateOdds(results)
     odds.foreach(println)
   }
 }
