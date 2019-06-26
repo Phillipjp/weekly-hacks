@@ -4,8 +4,22 @@ import scala.util.Random
 
 class WorldCupSimulation {
 
+  def simulateMatch(teamA: Team, teamB: Team, random: Random): Team ={
+    val probA = winProbability(teamA.rating, teamB.rating)
+    val rand = random.nextDouble()
+    if(rand > probA)
+      teamB
+    else
+      teamA
+  }
+
+  private def winProbability(ratingA: Double, ratingB: Double): Double ={
+    val diff = (ratingB - ratingA)/400
+    1/(1 + Math.pow(10, diff))
+  }
+
   def simulateRound(teams: Seq[Team], random: Random): Seq[Team] ={
-    teams.sliding(2,2).map((teams: Seq[Team]) => Fixture(teams.head, teams.last).simulateMatch(random)).toSeq
+    teams.grouped(2).map((teams: Seq[Team]) => simulateMatch(teams.head, teams.last, random)).toSeq
   }
 
   def simulateTournament(teams: Seq[Team], random: Random): Team ={
@@ -27,28 +41,53 @@ class WorldCupSimulation {
       ._1
   }
 
+  def calculateOdds(teams: Seq[Team], simulations: Int, random: Random):  Seq[(String, String)] = {
+    Stream.continually(teams)
+      .take(simulations)
+      .map(simulateTournament(_, random))
+      .groupBy(team => team)
+      .mapValues(wins => odds.fractional(wins.size, simulations))
+      .toSeq
+      .map{ case (team, odds) => (team.name, odds)}
+      .sortBy{ case (_, fraction) => -odds.fractionalToDecimal(fraction)}
 
+  }
+}
+
+object odds {
+
+  private def calculateGCD(a: Int, b: Int): Int = {
+    if(a == 0)
+      b
+    else if(b == 0)
+      a
+    else
+      calculateGCD(b, a % b)
+  }
+
+  def fractional(a: Int, b: Int): String = {
+
+    val gcd = calculateGCD(a, b)
+    val numerator = a/gcd
+    val denominator = b/gcd
+
+    numerator + "/" + denominator
+  }
+
+  def decimal(numerator: Double, denominator: Double): Double = {
+    numerator/denominator
+  }
+
+  def fractionalToDecimal(fraction: String): Double = {
+    val numerator = fraction.split("/").head.toDouble
+    val denominator = fraction.split("/").last.toDouble
+
+    decimal(numerator, denominator)
+
+  }
 }
 
 case class Team(name: String, rating: Int)
-
-case class Fixture(teamA: Team, teamB: Team){
-
-  def simulateMatch(random: Random): Team ={
-    val probA = winProbability(teamA.rating, teamB.rating)
-    val rand = random.nextDouble()
-    if(rand > probA)
-      teamB
-    else
-      teamA
-  }
-
-  private def winProbability(ratingA: Double, ratingB: Double): Double ={
-    val diff = (ratingB - ratingA)/400
-    1/(1 + Math.pow(10, diff))
-  }
-
-}
 
 object WorldCupSimulation {
   def main(args: Array[String]): Unit = {
@@ -73,5 +112,8 @@ object WorldCupSimulation {
     val worldCup = new WorldCupSimulation
     val winner = worldCup.simulateWorldCup(teams, 1000000, new Random())
     println(winner)
+    println()
+    val odds = worldCup.calculateOdds(teams, 1000000, new Random())
+    odds.foreach(println)
   }
 }
