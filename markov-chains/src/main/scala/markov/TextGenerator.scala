@@ -7,7 +7,7 @@ import scala.util.Random
 
 object TextGenerator {
 
-  val markovChain = makeMarkovChain("/Users/perks1/Dev/my-stuff/weekly-hack/markov-chains/src/main/resources/archer.txt")
+  val markovChain = makeMarkovChain("src/main/resources/archer.txt")
   val length = 3000
 
   private def generateTextSequence(text: Seq[String]): Seq[String] = {
