@@ -23,7 +23,7 @@ object MarkovChain {
       biGramMap
     else{
       val head: Seq[String] = groupedText.head
-      val biGramKey = Seq(head(0), head(1))
+      val biGramKey = head.dropRight(1)
       val wordCountKey: String = head(2)
 
       if(biGramMap.contains(biGramKey)){
