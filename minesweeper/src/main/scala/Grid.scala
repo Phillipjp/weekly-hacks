@@ -29,15 +29,18 @@ object Grid {
 
   private def getNumberOfSurroundingBombs(location: (Int, Int), grid: Map[(Int, Int), Cell]): Int = {
     val start = (location._1 - 1, location._2 - 1)
-    val surroundingLocations: Seq[(Int, Int)] = LazyList.iterate(start)(cell => nextCell(cell, start._2+2, start._2)).takeWhile(_._1 < start._1 + 3).toList
+    val surroundingLocations: Seq[(Int, Int)] = getSurroundingCellLocations(location, start)
     surroundingLocations
-      .filter(_ != location)
       .map { key =>
         grid.get(key) match{
           case Some(cell) => cell.value
           case _ => "0"
         }
       }.count(_ == "*")
+  }
+
+  private def getSurroundingCellLocations(location: (Int, Int), start: (Int, Int)) = {
+    LazyList.iterate(start)(cell => nextCell(cell, start._2 + 2, start._2)).takeWhile(_._1 < start._1 + 3).filter(_ != location).toList
   }
 
   private def makeBombLocations(grid: List[(Int, Int)], numBombs: Int): List[(Int,Int)] = {
@@ -64,25 +67,44 @@ object Grid {
       }.toMap
   }
 
+  def revealCell(key: (Int,Int), grid: Map[(Int, Int), Cell]):  Map[(Int, Int), Cell]= {
+    grid.get(key) match {
+      case Some(cell) =>
+        if(cell.reveal)
+          grid
+        else {
+          val newGrid = grid + (key -> Cell(cell.value, true))
+          if (cell.value != "0")
+            newGrid
+          else {
+            val start = (key._1 - 1, key._2 - 1)
+            val surroundingLocations = getSurroundingCellLocations(key, start).filter(grid.keySet.contains(_))
+            val grids: Seq[Map[(Int, Int), Cell]] = surroundingLocations.map(location => revealCell(location, newGrid))
+            mergeGrids(grids)
+          }
+        }
 
+
+    }
+  }
+
+
+  private def mergeGrids(grids: Seq[Map[(Int, Int), Cell]]): Map[(Int, Int), Cell] ={
+    val groupedCells: Map[(Int, Int), Seq[((Int, Int), Cell)]] = grids.flatMap(_.toSeq).groupBy(_._1)
+    groupedCells.keySet.toSeq.map{ key =>
+      val cells = groupedCells(key).map(_._2)
+      val cell = cells.filter(_.reveal).head
+      (key, cell)
+    }
+      .toMap
+  }
 
 
 
   def main(args: Array[String]): Unit = {
-    val size = 5
-    val grid = makeGrid(size, 6)
+    val size = 10
+    val grid = makeGrid(size, 20)
     printGrid(grid, size)
-
-    getNumberOfSurroundingBombs((0,3), grid)
-    getNumberOfSurroundingBombs((0,4), grid)
-    getNumberOfSurroundingBombs((1,3), grid)
-    getNumberOfSurroundingBombs((1,4), grid)
-    getNumberOfSurroundingBombs((2,3), grid)
-    getNumberOfSurroundingBombs((2,4), grid)
-    getNumberOfSurroundingBombs((3,3), grid)
-    getNumberOfSurroundingBombs((3,4), grid)
-    getNumberOfSurroundingBombs((4,3), grid)
-    getNumberOfSurroundingBombs((4,4), grid)
 
 //    grid.get((7,7)) match {
 //      case Some(value) => println(value)
@@ -93,7 +115,14 @@ object Grid {
   }
 
   private def printGrid(grid: Map[(Int, Int), Cell], size: Int): Unit = {
+    print("   ")
+    (0 until size).toList.foreach(c => print(" " + c + " "))
+    println()
+    print("   ")
+    (0 until size*3).toList.foreach(c => print("-"))
+    println()
     for (i <- 0 until size) {
+      print(i + " |")
       for (j <- 0 until size) {
         val cell = grid((i,j))
         if(cell.reveal)
