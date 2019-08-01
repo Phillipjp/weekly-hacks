@@ -1,22 +1,21 @@
 package markov
 
-
-
-
 import dto.{BiGram, WordCount}
 
+import scala.annotation.tailrec
 import scala.io.Source
 
 
 object MarkovChain {
 
-  def textTrimmer(text: String): Boolean =
+  private def textTrimmer(text: String): Boolean =
     text != "" && text != "-"
 
   private def readFile(path: String): Seq[String] = {
     Source.fromFile(path).getLines.toSeq.flatMap( line => line.split(" ").filter(textTrimmer))
   }
 
+  @tailrec
   private def generateBiGramMap(groupedText: Seq[Seq[String]], biGramMap: Map[BiGram, WordCount]): Map[BiGram, WordCount] = {
 
     if(groupedText.isEmpty)
@@ -54,8 +53,6 @@ object MarkovChain {
     val text = readFile(path)
     val groupedText = text.sliding(3).toSeq
     generateBiGramMap(groupedText, Map())
-
-
   }
 
   def main(args: Array[String]): Unit = {

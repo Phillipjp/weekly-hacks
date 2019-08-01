@@ -3,6 +3,7 @@ package markov
 import dto.{BiGram, WordCount}
 import markov.MarkovChain._
 
+import scala.annotation.tailrec
 import scala.util.Random
 
 object TextGenerator {
@@ -10,6 +11,7 @@ object TextGenerator {
   val markovChain = makeMarkovChain("src/main/resources/archer.txt")
   val length = 3000
 
+  @tailrec
   private def generateTextSequence(text: Seq[String]): Seq[String] = {
     if(text.size > length && text.last.last == '.')
       text
@@ -37,7 +39,7 @@ object TextGenerator {
 
   }
 
-  def getStart: BiGram = {
+  private def getStart: BiGram = {
     val key = pickRandomKey
     if(key.head.charAt(0).isUpper)
       key
