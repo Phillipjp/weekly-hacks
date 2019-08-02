@@ -113,7 +113,7 @@ object Grid {
 
   }
 
-  def printGrid(grid: Map[(Int, Int), Cell], size: Int): Unit = {
+  def printGrid(grid: grid, size: Int): Unit = {
     print("   ")
     (0 until size).toList.foreach(c => print(" " + c + " "))
     println()

@@ -2,10 +2,27 @@ package minesweeper
 
 import minesweeper.domain.{coord, grid}
 
-class Game(grid: grid) {
+class Game(grid: grid, size: Int, numBombs: Int) {
 
   def run(): Unit = {
+    val finalGrid = playGame(grid)
+    Grid.printGrid(finalGrid, size)
+  }
 
+
+  def playGame(grid: grid): grid = {
+    Grid.printGrid(grid, size)
+    val revealedCells = getRevealedCells(grid)
+    val input = getInput(revealedCells, grid.keySet.toList)
+    val updatedGrid = Grid.revealCell(List(input), grid)
+    if(checkForBomb(input, grid))
+      updatedGrid
+    else {
+      if(getRevealedCells(updatedGrid).length - numBombs == grid.keySet.toList.length - numBombs)
+        updatedGrid
+      else
+      playGame(updatedGrid)
+    }
   }
 
   private def getInput(revealedCells: List[coord], allCoords: List[coord]): coord = {
@@ -18,8 +35,6 @@ class Game(grid: grid) {
       getInput(revealedCells,allCoords)
     else
       (y,x)
-
-
   }
 
   private def getRevealedCells(grid: grid): List[coord] = {
