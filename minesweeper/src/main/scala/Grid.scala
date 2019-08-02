@@ -92,9 +92,13 @@ object Grid {
   private def mergeGrids(grids: Seq[Map[(Int, Int), Cell]]): Map[(Int, Int), Cell] ={
     val groupedCells: Map[(Int, Int), Seq[((Int, Int), Cell)]] = grids.flatMap(_.toSeq).groupBy(_._1)
     groupedCells.keySet.toSeq.map{ key =>
-      val cells = groupedCells(key).map(_._2)
-      val cell = cells.filter(_.reveal).head
-      (key, cell)
+      val cells: Seq[Cell] = groupedCells(key).map(_._2)
+      if(cells.exists(_.reveal)){
+        (key, cells.filter(_.reveal).head)
+      }
+      else{
+        (key, cells.head)
+      }
     }
       .toMap
   }
