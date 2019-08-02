@@ -1,3 +1,7 @@
+package minesweeper
+import minesweeper.domain.{coord, grid}
+
+import scala.annotation.tailrec
 import scala.util.Random
 
 case class Cell(value: String,  reveal: Boolean)
@@ -5,29 +9,29 @@ case class Cell(value: String,  reveal: Boolean)
 object Grid {
 
   //Map[(Int, Int), Cell]
-  def makeGrid(size: Int, numBombs: Int): Map[(Int, Int), Cell] = {
-    val g: Seq[(Int, Int)] = LazyList.iterate((0,0))(cell => nextCell(cell, size-1, 0)).takeWhile(_._1 < size)
+  def makeGrid(size: Int, numBombs: Int): grid = {
+    val g: Seq[coord] = LazyList.iterate((0,0))(cell => nextCell(cell, size-1, 0)).takeWhile(_._1 < size)
     val bombLocations = makeBombLocations(g.toList, numBombs)
     val grid = g.toList
         .map{ key =>
           if(bombLocations.contains(key))
-            (key, Cell("*", true))
+            (key, Cell("*", false))
           else
-            (key, Cell("0", true))
+            (key, Cell("0", false))
         }
         .toMap
 
     updateCellsWithSurroundingBombs(grid)
   }
 
-  private def nextCell(current: (Int,Int), size: Int, xReset: Int): (Int, Int) = {
+  private def nextCell(current: coord, size: Int, xReset: Int): coord = {
     if (current._2 < size)
       (current._1, current._2 + 1)
     else
       (current._1 + 1, xReset)
   }
 
-  private def getNumberOfSurroundingBombs(location: (Int, Int), grid: Map[(Int, Int), Cell]): Int = {
+  private def getNumberOfSurroundingBombs(location: coord, grid: grid): Int = {
     val start = (location._1 - 1, location._2 - 1)
     val surroundingLocations: Seq[(Int, Int)] = getSurroundingCellLocations(location, start)
     surroundingLocations
@@ -39,13 +43,13 @@ object Grid {
       }.count(_ == "*")
   }
 
-  private def getSurroundingCellLocations(location: (Int, Int), start: (Int, Int)) = {
+  private def getSurroundingCellLocations(location: coord, start: coord) = {
     LazyList.iterate(start)(cell => nextCell(cell, start._2 + 2, start._2)).takeWhile(_._1 < start._1 + 3).filter(_ != location).toList
   }
 
-  private def makeBombLocations(grid: List[(Int, Int)], numBombs: Int): List[(Int,Int)] = {
+  private def makeBombLocations(grid: List[coord], numBombs: Int): List[coord] = {
 
-    def generateLocations(grid: List[(Int, Int)], locations: List[(Int,Int)], numBombs: Int): List[(Int, Int)] = {
+    def generateLocations(grid: List[coord], locations: List[coord], numBombs: Int): List[coord] = {
       if(locations.length == numBombs)
         locations
       else{
@@ -57,7 +61,7 @@ object Grid {
     generateLocations(grid, List(), numBombs)
   }
 
-  private def updateCellsWithSurroundingBombs(grid: Map[(Int, Int), Cell]): Map[(Int, Int),Cell] = {
+  private def updateCellsWithSurroundingBombs(grid: grid):grid = {
     grid.toSeq
       .map{case(key, cell) =>
         if(cell.value == "*")
@@ -67,43 +71,34 @@ object Grid {
       }.toMap
   }
 
-  def revealCell(key: (Int,Int), grid: Map[(Int, Int), Cell]):  Map[(Int, Int), Cell]= {
-    grid.get(key) match {
-      case Some(cell) =>
-        if(cell.reveal)
-          grid
-        else {
-          val newGrid = grid + (key -> Cell(cell.value, true))
-          if (cell.value != "0")
-            newGrid
+  @tailrec
+  def revealCell(cellLocations: List[coord], grid: grid): grid = {
+    if(cellLocations.isEmpty)
+      grid
+    else{
+      val location = cellLocations.head
+      grid.get(location) match {
+        case Some(cell) =>
+          if (cell.reveal)
+            revealCell(cellLocations.drop(1), grid)
           else {
-            val start = (key._1 - 1, key._2 - 1)
-            val surroundingLocations = getSurroundingCellLocations(key, start).filter(grid.keySet.contains(_))
-            val grids: Seq[Map[(Int, Int), Cell]] = surroundingLocations.map(location => revealCell(location, newGrid))
-            mergeGrids(grids)
+            val newGrid = grid + (location -> Cell(cell.value, true))
+            if (cell.value != "0")
+              revealCell(cellLocations.drop(1), newGrid)
+            else {
+              val start = (location._1 - 1, location._2 - 1)
+              val surroundingLocations = getSurroundingCellLocations(location, start).filter(grid.keySet.contains(_))
+              val newCellLocations = (cellLocations.drop(1) ++ surroundingLocations).toSet.toList
+              revealCell(newCellLocations, newGrid)
+            }
           }
-        }
+        case _ =>
+          revealCell(cellLocations.drop(1), grid)
 
+      }
 
     }
   }
-
-
-  private def mergeGrids(grids: Seq[Map[(Int, Int), Cell]]): Map[(Int, Int), Cell] ={
-    val groupedCells: Map[(Int, Int), Seq[((Int, Int), Cell)]] = grids.flatMap(_.toSeq).groupBy(_._1)
-    groupedCells.keySet.toSeq.map{ key =>
-      val cells: Seq[Cell] = groupedCells(key).map(_._2)
-      if(cells.exists(_.reveal)){
-        (key, cells.filter(_.reveal).head)
-      }
-      else{
-        (key, cells.head)
-      }
-    }
-      .toMap
-  }
-
-
 
   def main(args: Array[String]): Unit = {
     val size = 10
@@ -118,7 +113,7 @@ object Grid {
 
   }
 
-  private def printGrid(grid: Map[(Int, Int), Cell], size: Int): Unit = {
+  def printGrid(grid: Map[(Int, Int), Cell], size: Int): Unit = {
     print("   ")
     (0 until size).toList.foreach(c => print(" " + c + " "))
     println()
