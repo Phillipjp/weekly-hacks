@@ -1,4 +1,5 @@
 package minesweeper
+
 object Minesweeper extends App {
 
   val size = 8
