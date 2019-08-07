@@ -8,9 +8,9 @@ case class Cell(value: String,  reveal: Boolean)
 
 object Grid {
 
-  //Map[(Int, Int), Cell]
   def makeGrid(size: Int, numBombs: Int): grid = {
-    val g: Seq[coord] = LazyList.iterate((0,0))(cell => nextCell(cell, size-1, 0)).takeWhile(_._1 < size)
+    val start = (0,0)
+    val g: Seq[coord] = LazyList.iterate(start)(cell => nextCell(cell, size-1, 0)).takeWhile(_._1 < size)
     val bombLocations = makeBombLocations(g.toList, numBombs)
     val grid = g.toList
         .map{ key =>
@@ -100,28 +100,27 @@ object Grid {
     }
   }
 
-  def main(args: Array[String]): Unit = {
-    val size = 10
-    val grid = makeGrid(size, 20)
-    printGrid(grid, size)
-
-//    grid.get((7,7)) match {
-//      case Some(value) => println(value)
-//      case _ => println("no such key")
-//
-//    }
-
-  }
-
   def printGrid(grid: grid, size: Int): Unit = {
-    print("   ")
-    (0 until size).toList.foreach(c => print(" " + c + " "))
+
+    print("    ")
+    (0 until size).toList.foreach(c => print(" " + c.toString.charAt(0) + " "))
     println()
-    print("   ")
+    print("    ")
+    (0 until size).toList.foreach { c =>
+      if (c.toString.length > 1)
+        print(" " + c.toString.charAt(1) + " ")
+      else
+        print("   ")
+    }
+    println()
+    print("    ")
     (0 until size*3).toList.foreach(c => print("-"))
     println()
     for (i <- 0 until size) {
-      print(i + " |")
+      if(i < 10 )
+        print(i + "  |")
+      else
+        print(i + " |")
       for (j <- 0 until size) {
         val cell = grid((i,j))
         if(cell.reveal)

@@ -2,6 +2,8 @@ package minesweeper
 
 import minesweeper.domain.{coord, grid}
 
+import scala.annotation.tailrec
+
 class Game(grid: grid, size: Int, numBombs: Int) {
 
   def run(): Unit = {
@@ -10,7 +12,8 @@ class Game(grid: grid, size: Int, numBombs: Int) {
   }
 
 
-  def playGame(grid: grid): grid = {
+  @tailrec
+  final def playGame(grid: grid): grid = {
     Grid.printGrid(grid, size)
     val revealedCells = getRevealedCells(grid)
     val input = getInput(revealedCells, grid.keySet.toList)
@@ -18,23 +21,24 @@ class Game(grid: grid, size: Int, numBombs: Int) {
     if(checkForBomb(input, grid))
       updatedGrid
     else {
-      if(getRevealedCells(updatedGrid).length - numBombs == grid.keySet.toList.length - numBombs)
+      if(getRevealedCells(updatedGrid).length == grid.keySet.toList.length - numBombs)
         updatedGrid
       else
-      playGame(updatedGrid)
+        playGame(updatedGrid)
     }
   }
 
+  @tailrec
   private def getInput(revealedCells: List[coord], allCoords: List[coord]): coord = {
     println("X coordinate: ")
-    val x =  scala.io.StdIn.readLine().toInt
+    val x =  scala.io.StdIn.readLine()
     println("Y coordinate: ")
-    val y =  scala.io.StdIn.readLine().toInt
+    val y =  scala.io.StdIn.readLine()
 
-    if(revealedCells.contains((y,x)) || !allCoords.contains((y,x)))
+    if(revealedCells.contains((y.toInt,x.toInt)) || !allCoords.contains((y.toInt,x.toInt)))
       getInput(revealedCells,allCoords)
     else
-      (y,x)
+      (y.toInt,x.toInt)
   }
 
   private def getRevealedCells(grid: grid): List[coord] = {
