@@ -72,7 +72,7 @@ object Grid {
   }
 
   @tailrec
-  def revealCell(cellLocations: List[coord], grid: grid): grid = {
+  def revealCells(cellLocations: List[coord], grid: grid): grid = {
     if(cellLocations.isEmpty)
       grid
     else{
@@ -80,20 +80,20 @@ object Grid {
       grid.get(location) match {
         case Some(cell) =>
           if (cell.reveal)
-            revealCell(cellLocations.drop(1), grid)
+            revealCells(cellLocations.drop(1), grid)
           else {
             val newGrid = grid + (location -> Cell(cell.value, true))
             if (cell.value != "0")
-              revealCell(cellLocations.drop(1), newGrid)
+              revealCells(cellLocations.drop(1), newGrid)
             else {
               val start = (location._1 - 1, location._2 - 1)
               val surroundingLocations = getSurroundingCellLocations(location, start).filter(grid.keySet.contains(_))
               val newCellLocations = (cellLocations.drop(1) ++ surroundingLocations).toSet.toList
-              revealCell(newCellLocations, newGrid)
+              revealCells(newCellLocations, newGrid)
             }
           }
         case _ =>
-          revealCell(cellLocations.drop(1), grid)
+          revealCells(cellLocations.drop(1), grid)
 
       }
 

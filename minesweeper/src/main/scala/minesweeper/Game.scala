@@ -17,7 +17,7 @@ class Game(grid: grid, size: Int, numBombs: Int) {
     Grid.printGrid(grid, size)
     val revealedCells = getRevealedCells(grid)
     val input = getInput(revealedCells, grid.keySet.toList)
-    val updatedGrid = Grid.revealCell(List(input), grid)
+    val updatedGrid = Grid.revealCells(List(input), grid)
     if(checkForBomb(input, grid))
       updatedGrid
     else {
