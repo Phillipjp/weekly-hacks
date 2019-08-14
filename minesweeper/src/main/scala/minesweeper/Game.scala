@@ -1,10 +1,10 @@
 package minesweeper
 
-import minesweeper.domain.{coord, grid}
+import minesweeper.domain.{Coord, Grid}
 
 import scala.annotation.tailrec
 
-class Game(grid: grid, size: Int, numBombs: Int) {
+class Game(grid: Grid, size: Int, numBombs: Int) {
 
   def run(): Unit = {
     val finalGrid = playGame(grid)
@@ -13,7 +13,7 @@ class Game(grid: grid, size: Int, numBombs: Int) {
 
 
   @tailrec
-  final def playGame(grid: grid): grid = {
+  final def playGame(grid: Grid): Grid = {
     Grid.printGrid(grid, size)
     val revealedCells = getRevealedCells(grid)
     val input = getInput(revealedCells, grid.keySet.toList)
@@ -29,7 +29,7 @@ class Game(grid: grid, size: Int, numBombs: Int) {
   }
 
   @tailrec
-  private def getInput(revealedCells: List[coord], allCoords: List[coord]): coord = {
+  private def getInput(revealedCells: List[Coord], allCoords: List[Coord]): Coord = {
     println("X coordinate: ")
     val x =  scala.io.StdIn.readLine()
     println("Y coordinate: ")
@@ -41,11 +41,11 @@ class Game(grid: grid, size: Int, numBombs: Int) {
       (y.toInt,x.toInt)
   }
 
-  private def getRevealedCells(grid: grid): List[coord] = {
+  private def getRevealedCells(grid: Grid): List[Coord] = {
     grid.toList.filter(row => row._2.reveal).map(_._1)
   }
 
-  private def checkForBomb(entry: coord, grid: grid): Boolean = {
+  private def checkForBomb(entry: Coord, grid: Grid): Boolean = {
     grid(entry).value == "*"
   }
 
