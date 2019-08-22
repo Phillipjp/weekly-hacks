@@ -13,9 +13,21 @@ object Game {
     val (players, newDeck) = dealToPlayers(deck, Seq(), 4)
 
     players.foreach(println)
-    println(newDeck.size)
+    println()
 
+    val (flop, flopDeck) = dealFlop(newDeck)
+    flop.foreach(println)
+    println()
 
+    val (turn, turnDeck) = dealTurnOrRiver(flopDeck)
+    println(turn)
+    println()
+
+    val (river, riverDeck) = dealTurnOrRiver(turnDeck)
+    println(river)
+    println()
+
+    riverDeck.foreach(println)
   }
 
 }

@@ -38,5 +38,24 @@ object Dealer {
     (Seq(deal1._1, deal2._1), deal2._2)
   }
 
+  def dealFlop(deck: Deck): (Seq[Card], Deck) = {
+    dealFaceUpFlopCards(discardCard(deck), Seq())
+  }
+
+  @tailrec
+  private def dealFaceUpFlopCards(deck: Deck, flop: Seq[Card]): (Seq[Card], Deck) = {
+    if(flop.length == 3)
+      (flop, deck)
+    else{
+      val (card, newDeck) = dealCard(deck)
+      dealFaceUpFlopCards(newDeck, flop :+ card)
+    }
+  }
+
+  def dealTurnOrRiver(deck: Deck): (Card, Deck) = {
+    dealCard(discardCard(deck))
+  }
+
+
 
 }
