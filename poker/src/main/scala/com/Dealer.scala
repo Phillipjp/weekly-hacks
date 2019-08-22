@@ -1,44 +1,41 @@
 package com
 import scala.util.Random.shuffle
+import com.Domain.{Deck, Player}
 
-class Dealer {
+import scala.annotation.tailrec
 
-  def dealDeck(): Unit ={
-    val deck = createDeck()
-    deck.foreach(println)
-    val (newDeck, c1)  = dealCard(deck)
-    println(c1)
-    val c2 = dealCard(newDeck)
-    println(c2._2)
-  }
 
-  def dealCard(deck: Seq[Card]): (Seq[Card], Card) ={
+object Dealer {
+
+  private def dealCard(deck: Deck): (Card, Deck) = {
     val topCard = deck.last
     val newDeck = discardCard(deck)
-    (newDeck, topCard)
+    (topCard, newDeck)
   }
 
-  def discardCard(deck: Seq[Card]): Seq[Card]={
+  private def discardCard(deck: Deck): Deck = {
     deck.dropRight(1)
   }
 
-  def createDeck(): Seq[Card] ={
-    val orderedDeck = Stream.iterate(Card(Suit.SPADE, CardValue.Ace))(nextCard)
-      .takeWhile(card => card != Card(Suit.HEART, CardValue.King))
-    shuffle(orderedDeck)
+  def shuffleDeck(deck: Deck): Deck ={
+    shuffle(deck)
   }
 
-  private def nextCard(card: Card): Card ={
-    CardValue.nextOf(card.value) match {
-      case None => Suit.nextOf(card.suit) match{
-        case Some(suit) => Card(suit, CardValue.Ace)
-      }
-      case Some(value) =>  Card(card.suit, value )
+  @tailrec
+  def dealToPlayers(deck: Deck, players: Seq[Player], numPlayers: Int): (Seq[Player], Deck) ={
+    if(numPlayers == players.length)
+      (players, deck)
+    else{
+      val (cards, newDeck) = dealToPlayer(deck)
+      dealToPlayers(newDeck, players :+ Player(cards), numPlayers)
     }
+
   }
 
-  def main(args: Array[String]): Unit = {
-    dealDeck()
+  private def dealToPlayer(deck: Deck): (Seq[Card], Deck) = {
+    val deal1 = dealCard(deck)
+    val deal2 = dealCard(deal1._2)
+    (Seq(deal1._1, deal2._1), deal2._2)
   }
 
 

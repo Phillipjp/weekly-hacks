@@ -14,13 +14,13 @@ class NextEnum extends Enumeration {
 
 object Suit extends NextEnum {
   type Suit = Value
-  val SPADE, DIAMOND, CLUB, HEART = Value
+  val HEART, CLUB, DIAMOND, SPADE = Value
 }
 
 object CardValue extends NextEnum {
   type CardValue = Value
-  val Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten,
-  Jack, Queen, King = Value
+  val Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten,
+  Jack, Queen, King, Ace = Value
 }
 
 case class Card(suit: Suit, value: CardValue) {}
