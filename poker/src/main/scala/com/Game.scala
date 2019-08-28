@@ -28,6 +28,8 @@ object Game {
     println()
 
     riverDeck.foreach(println)
+
+    val table = flop :+ turn :+ river
   }
 
 }

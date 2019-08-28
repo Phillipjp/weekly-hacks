@@ -6,4 +6,6 @@ object Domain {
 
   case class Player(cards: Seq[Card])
 
+  case class Hand(scoringCards: Seq[Card], kickers: Seq[Card], rank: Int)
+
 }
