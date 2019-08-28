@@ -9,3 +9,8 @@ object Domain {
   case class Hand(scoringCards: Seq[Card], kickers: Seq[Card], rank: Int)
 
 }
+
+object HandRanks {
+  val royalFlushRank = 1
+  val flushRank = 2
+}
