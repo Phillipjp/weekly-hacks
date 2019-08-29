@@ -117,4 +117,14 @@ class HandCheckerSpec extends FlatSpec with Matchers {
     isFullHouse(hand3) should equal(false)
   }
 
+  it should "correctly identify a two pair" in {
+    val hand1 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Three), Card(HEART, Three), Card(SPADE, Five), Card(DIAMOND, Four))
+    val hand2 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Three), Card(HEART, Three), Card(SPADE, Four), Card(DIAMOND, Four))
+    val hand3 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Three), Card(HEART, Four), Card(SPADE, Five), Card(DIAMOND, Six))
+
+    isTwoPair(hand1) should equal(true)
+    isTwoPair(hand2) should equal(true)
+    isTwoPair(hand3) should equal(false)
+  }
+
 }

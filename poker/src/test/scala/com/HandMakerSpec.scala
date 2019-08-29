@@ -39,4 +39,22 @@ class HandMakerSpec extends FlatSpec with Matchers {
     makeNOfAKind(cards4, 2) should equal(Hand(Seq(Card(CLUB, Three), Card(HEART, Three)), Seq(Card(DIAMOND, Six), Card(SPADE, Five),Card(SPADE, Two), Card(DIAMOND, Two)), pairRank))
 
   }
+
+  it should "make a full house hand" in{
+    val cards1 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Two), Card(HEART, Three), Card(SPADE, Three), Card(DIAMOND, Four))
+    val cards2 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Two), Card(HEART, Three), Card(SPADE, Three), Card(DIAMOND, Three))
+
+    makeFullHouse(cards1) should equal(Hand(Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Two), Card(HEART, Three), Card(SPADE, Three)), Seq(Card(DIAMOND, Four)), fullHouseRank))
+    makeFullHouse(cards2) should equal(Hand(Seq(Card(HEART, Three), Card(SPADE, Three), Card(DIAMOND, Three), Card(DIAMOND, Two), Card(CLUB, Two)), Seq(Card(SPADE, Two)), fullHouseRank))
+
+  }
+
+  it should "make a two pair hand" in {
+    val cards1 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Three), Card(HEART, Three), Card(SPADE, Five), Card(DIAMOND, Four))
+    val cards2 = Seq(Card(SPADE, Two), Card(DIAMOND, Two), Card(CLUB, Three), Card(HEART, Three), Card(SPADE, Four), Card(DIAMOND, Four))
+
+    makeTwoPair(cards1) should equal(Hand(Seq(Card(CLUB, Three), Card(HEART, Three), Card(SPADE, Two), Card(DIAMOND, Two)), Seq( Card(SPADE, Five), Card(DIAMOND, Four)), twoPairRank))
+    makeTwoPair(cards2) should equal(Hand(Seq(Card(SPADE, Four), Card(DIAMOND, Four), Card(CLUB, Three), Card(HEART, Three)), Seq(Card(SPADE, Two), Card(DIAMOND, Two)), twoPairRank))
+  }
+
 }

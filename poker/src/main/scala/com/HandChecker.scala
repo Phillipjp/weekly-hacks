@@ -47,7 +47,17 @@ object HandChecker {
   def isNOfAKind(cards: Seq[Card], n: Int): Boolean =
     cards.groupBy(c => c.value).mapValues(_.size).values.toSeq.contains(n)
 
-  def isFullHouse(cards: Seq[Card]): Boolean = {
-    isNOfAKind(cards, 3) && isNOfAKind(cards, 2)
-  }
+  def isFullHouse(cards: Seq[Card]): Boolean =
+    (isNOfAKind(cards, 3) && isNOfAKind(cards, 2)) || isTwoNOfAKinds(cards, 3)
+
+
+  def isTwoNOfAKinds(cards: Seq[Card], n: Int): Boolean =
+    cards.groupBy(c => c.value).mapValues(_.size).values.count(_ == n) == 2
+
+  def atleastMoccurencesOfNOfAKind(cards: Seq[Card], m: Int, n: Int): Boolean =
+    cards.groupBy(c => c.value).mapValues(_.size).values.count(_ == n) >= m
+
+
+  def isTwoPair(cards: Seq[Card]): Boolean =
+    atleastMoccurencesOfNOfAKind(cards, 2, 2)
 }
