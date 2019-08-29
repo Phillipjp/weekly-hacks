@@ -11,6 +11,14 @@ object Domain {
 }
 
 object HandRanks {
-  val royalFlushRank = 1
-  val flushRank = 2
+  val royalFlushRank = 10
+  val straightFlushRank = 9
+  val fourOfAKindRank = 8
+  val fullHouseRank = 7
+  val flushRank = 6
+  val straightRank = 5
+  val threeOfAKindRank = 4
+  val twoPairRank = 3
+  val pairRank = 2
+  val highCardRank = 1
 }

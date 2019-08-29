@@ -1,5 +1,6 @@
 package com
 
+import com.CardValue._
 import scala.annotation.tailrec
 
 object HandChecker {
@@ -14,6 +15,21 @@ object HandChecker {
     }
     else
       false
+  }
+
+  def isStraightFlush(cards: Seq[Card]): Boolean = {
+    cards.groupBy(c => c.suit)
+      .toSeq
+      .map { case (_, groupedCards) => groupedCards.sortBy(_.value.id) }
+      .exists(sortedCards => sortedCards.size > 4 && isStraight(sortedCards))
+  }
+
+  def isRoyalFlush(cards: Seq[Card]): Boolean = {
+    val royal = Set(Ace, King, Queen, Jack, Ten)
+    cards.groupBy(c => c.suit)
+      .toSeq
+      .map { case (_, groupedCards) => groupedCards.map(_.value).toSet}
+      .exists(royal.subsetOf(_))
   }
 
   @tailrec
