@@ -1,8 +1,8 @@
 package com
-import scala.util.Random.shuffle
-import com.Domain.{Deck, Player}
+import com.Domain.Deck
 
 import scala.annotation.tailrec
+import scala.util.Random.shuffle
 
 
 object Dealer {
@@ -27,7 +27,7 @@ object Dealer {
       (players, deck)
     else{
       val (cards, newDeck) = dealToPlayer(deck)
-      dealToPlayers(newDeck, players :+ Player(cards), numPlayers)
+      dealToPlayers(newDeck, players :+ Player(cards, players.length + 1), numPlayers)
     }
 
   }

@@ -4,6 +4,9 @@ import com.Domain.Hand
 import com.CardValue._
 import com.HandRanks._
 import com.HandChecker._
+import com.Suit.Suit
+
+import scala.annotation.tailrec
 
 object HandMaker {
 
@@ -48,21 +51,18 @@ object HandMaker {
   def makeFullHouse(cards: Seq[Card]): Hand = {
 
     val scoringCards = isTwoNOfAKinds(cards, 3) match {
-      case true => makeTwoThreeOfAKindsFullHouseScoringCards(cards)
-      case false =>
-        val pair = scoringCardsForNOfAKind(cards, 2)
+      case true =>
         val threeOfAKind = scoringCardsForNOfAKind(cards, 3)
+        val pair = scoringCardsForNOfAKind(filterCards(cards, threeOfAKind), 3).tail
+        threeOfAKind ++ pair
+      case false =>
+        val threeOfAKind = scoringCardsForNOfAKind(cards, 3)
+        val pair = scoringCardsForNOfAKind(cards, 2)
         threeOfAKind ++ pair
     }
 
     val kickers = getKickers(cards, scoringCards)
     Hand(scoringCards, kickers, fullHouseRank)
-  }
-
-  private def makeTwoThreeOfAKindsFullHouseScoringCards(cards: Seq[Card]): Seq[Card] = {
-    val threeOfAKind = scoringCardsForNOfAKind(cards, 3)
-    val pair = scoringCardsForNOfAKind(filterCards(cards, threeOfAKind), 3).tail
-    threeOfAKind ++ pair
   }
 
   def makeTwoPair(cards: Seq[Card]): Hand = {
@@ -78,4 +78,37 @@ object HandMaker {
     val kickers = getKickers(cards, highCard)
     Hand(highCard, kickers, highCardRank)
   }
+
+  def makeStraight(cards: Seq[Card]): Hand = {
+    val scoringCards = straightScoringCards(cards)
+    val kickers = getKickers(cards, scoringCards)
+    Hand(scoringCards, kickers, straightRank)
+  }
+
+  def makeStraightFlush(cards: Seq[Card]): Hand = {
+    val flushCards = cards.groupBy(c => c.suit).filter{case(_, cards) => cards.length > 4}.values.head
+    val scoringCards = straightScoringCards(flushCards)
+    val kickers = getKickers(cards, scoringCards)
+    Hand(scoringCards, kickers, straightFlushRank)
+  }
+
+  private def straightScoringCards(cards: Seq[Card]): Seq[Card] = {
+    val distinctCardValues = cards.map(c => c.value.id).sortBy(-_).distinct
+    val slidingCardValues = distinctCardValues.sliding(5, 1).toSeq
+    val highestStraightValues = getHighestStraightValues(slidingCardValues)
+    highestStraightValues.map(id => getCardByValueId(id, cards))
+  }
+
+  @tailrec
+  private def getHighestStraightValues(slidingCardValues: Seq[Seq[Int]]): Seq[Int] = {
+    if(slidingCardValues.length == 1)
+      slidingCardValues.head
+    else if(isConsecutive(slidingCardValues.head))
+      slidingCardValues.head
+    else
+      getHighestStraightValues(slidingCardValues.tail)
+  }
+
+  private def getCardByValueId(id: Int, cards: Seq[Card]): Card =
+    cards.filter(_.value.id == id).head
 }

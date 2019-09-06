@@ -9,7 +9,7 @@ object HandChecker {
     cards.groupBy(c => c.suit).mapValues(_.size).values.toSeq.exists(_ > 4)
 
   def isStraight(cards: Seq[Card]): Boolean = {
-    val distinctCardValues = cards.map(c => c.value.id).sorted.distinct
+    val distinctCardValues = cards.map(c => c.value.id).sortBy(-_).distinct
     if(distinctCardValues.size > 4) {
       distinctCardValues.sliding(5, 1).exists(isConsecutive)
     }
@@ -33,11 +33,11 @@ object HandChecker {
   }
 
   @tailrec
-  private def isConsecutive(cards: Seq[Int]): Boolean ={
+  def isConsecutive(cards: Seq[Int]): Boolean ={
     if(cards.size == 1)
       true
     else {
-      if(cards.head + 1 == cards(1))
+      if(cards.head - 1 == cards(1))
         isConsecutive(cards.tail)
       else
         false
@@ -50,13 +50,11 @@ object HandChecker {
   def isFullHouse(cards: Seq[Card]): Boolean =
     (isNOfAKind(cards, 3) && isNOfAKind(cards, 2)) || isTwoNOfAKinds(cards, 3)
 
-
   def isTwoNOfAKinds(cards: Seq[Card], n: Int): Boolean =
     cards.groupBy(c => c.value).mapValues(_.size).values.count(_ == n) == 2
 
   def atleastMoccurencesOfNOfAKind(cards: Seq[Card], m: Int, n: Int): Boolean =
     cards.groupBy(c => c.value).mapValues(_.size).values.count(_ == n) >= m
-
 
   def isTwoPair(cards: Seq[Card]): Boolean =
     atleastMoccurencesOfNOfAKind(cards, 2, 2)

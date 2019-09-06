@@ -1,7 +1,11 @@
 package com
-import com.Domain.Player
-import com.Deck._
 import com.Dealer._
+import com.Deck._
+import com.Domain.{Hand, PlayerHand}
+import com.HandComparator._
+import com.Suit._
+import com.CardValue._
+
 object Game {
 
 
@@ -27,9 +31,20 @@ object Game {
     println(river)
     println()
 
-    riverDeck.foreach(println)
-
     val table = flop :+ turn :+ river
+
+    val hands = players.map(player => PlayerHand(player.makeHand(table), player.id))
+    hands.foreach(println)
+
+    val winningHands = getWinningPlayerHand(hands)
+    if(winningHands.length == 1){
+      println(s"Player ${winningHands.head.id} wins!")
+    }
+    else{
+      println(s"Players ${winningHands.map(wh => wh.id).mkString(" and ")} draw!")
+    }
+
+
   }
 
 }

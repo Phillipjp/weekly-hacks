@@ -15,13 +15,13 @@ class HandMakerSpec extends FlatSpec with Matchers {
       Card(SPADE, Five),Card(SPADE, Six),Card(SPADE, Seven),Card(SPADE, Eight))
 
     val cards2 = Seq(Card(SPADE, Queen),Card(SPADE, Jack),Card(SPADE, Ace),
-      Card(SPADE, Ten),Card(SPADE, King),Card(SPADE, Seven),Card(SPADE, Eight))
+      Card(SPADE, Ten),Card(SPADE, King),Card(SPADE, Nine),Card(SPADE, Eight))
 
     makeFlush(cards1) should equal(Hand(Seq(Card(SPADE, Eight),Card(SPADE, Seven),Card(SPADE, Six),Card(SPADE, Five),Card(SPADE, Four)),
       Seq(Card(SPADE, Three),Card(SPADE, Two)), flushRank))
 
     makeFlush(cards2) should equal(Hand(Seq(Card(SPADE, Ace),Card(SPADE, King),Card(SPADE, Queen),Card(SPADE, Jack),Card(SPADE, Ten)),
-      Seq(Card(SPADE, Eight),Card(SPADE, Seven)), royalFlushRank))
+      Seq(Card(SPADE, Nine),Card(SPADE, Eight)), royalFlushRank))
   }
 
   it should "make an N of a kind hand" in {
@@ -55,6 +55,35 @@ class HandMakerSpec extends FlatSpec with Matchers {
 
     makeTwoPair(cards1) should equal(Hand(Seq(Card(CLUB, Three), Card(HEART, Three), Card(SPADE, Two), Card(DIAMOND, Two)), Seq( Card(SPADE, Five), Card(DIAMOND, Four)), twoPairRank))
     makeTwoPair(cards2) should equal(Hand(Seq(Card(SPADE, Four), Card(DIAMOND, Four), Card(CLUB, Three), Card(HEART, Three)), Seq(Card(SPADE, Two), Card(DIAMOND, Two)), twoPairRank))
+  }
+
+  it should "make a high card hand" in {
+    val cards = Seq(Card(SPADE, Queen),Card(SPADE, Jack),Card(SPADE, Ace),
+      Card(SPADE, Ten),Card(SPADE, King),Card(SPADE, Seven),Card(SPADE, Eight))
+
+    makeHighCard(cards) shouldBe Hand(Seq(Card(SPADE, Ace)),
+      Seq(Card(SPADE, King), Card(SPADE, Queen),Card(SPADE, Jack),
+      Card(SPADE, Ten), Card(SPADE, Eight), Card(SPADE, Seven)), highCardRank)
+  }
+
+  it should "make a straight" in {
+    val cards = Seq(Card(SPADE, Queen), Card(SPADE, Jack), Card(SPADE, Ace),
+      Card(SPADE, Ten),Card(SPADE, King),Card(SPADE, Seven),Card(SPADE, Eight))
+    makeStraight(cards) shouldBe Hand(Seq(Card(SPADE, Ace), Card(SPADE, King), Card(SPADE, Queen),
+      Card(SPADE, Jack),Card(SPADE, Ten)), Seq(Card(SPADE, Eight), Card(SPADE, Seven)), straightRank)
+  }
+
+  it should "make a straight flush" in {
+    val cards1 = Seq(Card(SPADE, Queen), Card(SPADE, Jack), Card(SPADE, Nine),
+      Card(SPADE, Ten),Card(SPADE, King),Card(SPADE, Seven),Card(SPADE, Eight))
+    val cards2 = Seq(Card(CLUB, Queen), Card(SPADE, Jack), Card(SPADE, Nine),
+      Card(SPADE, Ten),Card(CLUB, King),Card(SPADE, Seven),Card(SPADE, Eight))
+
+
+    makeStraightFlush(cards1) shouldBe Hand(Seq(Card(SPADE, King), Card(SPADE, Queen),
+      Card(SPADE, Jack),Card(SPADE, Ten), Card(SPADE, Nine)), Seq(Card(SPADE, Eight), Card(SPADE, Seven)), straightFlushRank)
+    makeStraightFlush(cards2) shouldBe Hand(Seq(Card(SPADE, Jack),Card(SPADE, Ten), Card(SPADE, Nine), Card(SPADE, Eight), Card(SPADE, Seven)),
+      Seq(Card(CLUB, King), Card(CLUB, Queen)), straightFlushRank)
   }
 
 }
