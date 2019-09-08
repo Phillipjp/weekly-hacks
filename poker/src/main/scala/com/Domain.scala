@@ -3,7 +3,6 @@ package com
 object Domain {
 
   type Deck = Seq[Card]
-  case class PlayerHand(hand: Hand, id: Int)
   case class Hand(scoringCards: Seq[Card], kickers: Seq[Card], rank: Int)
 
 }

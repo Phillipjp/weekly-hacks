@@ -3,10 +3,10 @@ import com.Domain.Hand
 import com.HandChecker._
 import com.HandMaker._
 
-case class Player(cards: Seq[Card], id: Int) {
+case class Player(hand: Hand, id: Int) {
 
   def makeHand(tableCards: Seq[Card]) : Hand = {
-    val usableCards = cards ++ tableCards
+    val usableCards = hand.scoringCards ++ hand.kickers ++ tableCards
 
     if(isRoyalFlush(usableCards))
       makeFlush(usableCards)

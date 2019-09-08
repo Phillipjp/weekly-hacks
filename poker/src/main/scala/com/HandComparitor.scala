@@ -1,21 +1,19 @@
 package com
 
-import com.Domain._
-
 import scala.annotation.tailrec
 
 object HandComparator {
 
-  def getWinningPlayerHand(playerHands: Seq[PlayerHand]): Seq[PlayerHand] = {
-    val topHands = playerHands.groupBy(_.hand.rank).maxBy{case (rank, _) => rank}._2
+  def getWinningPlayerHand(players: Seq[Player]): Seq[Player] = {
+    val topHands = players.groupBy(_.hand.rank).maxBy{case (rank, _) => rank}._2
     if(topHands.length == 1)
       topHands
     else
       resolveDraw(topHands)
   }
 
-  private def resolveDraw(playerHands: Seq[PlayerHand]) : Seq[PlayerHand] = {
-    val topScoringCardsHands = resolveUsingScoringCards(playerHands, 0)
+  private def resolveDraw(players: Seq[Player]) : Seq[Player] = {
+    val topScoringCardsHands = resolveUsingScoringCards(players, 0)
     if(topScoringCardsHands.length == 1)
       topScoringCardsHands
     else
@@ -23,11 +21,11 @@ object HandComparator {
   }
 
   @tailrec
-  private def resolveUsingScoringCards(playerHands: Seq[PlayerHand], index: Int): Seq[PlayerHand] = {
-    if(index == playerHands.head.hand.scoringCards.length)
-      playerHands
+  private def resolveUsingScoringCards(players: Seq[Player], index: Int): Seq[Player] = {
+    if(index == players.head.hand.scoringCards.length)
+      players
     else{
-      val topHands = playerHands.groupBy(playerHand => playerHand.hand.scoringCards(index).value.id)
+      val topHands = players.groupBy(playerHand => playerHand.hand.scoringCards(index).value.id)
         .maxBy{case (rank, _) => rank}._2
       if(topHands.length == 1)
         topHands
@@ -37,11 +35,11 @@ object HandComparator {
   }
 
   @tailrec
-  private def resolveUsingKickers(playerHands: Seq[PlayerHand], index: Int): Seq[PlayerHand] = {
-    if(index == playerHands.head.hand.kickers.length)
-      playerHands
+  private def resolveUsingKickers(players: Seq[Player], index: Int): Seq[Player] = {
+    if(index == players.head.hand.kickers.length)
+      players
     else{
-      val topHands = playerHands.groupBy(playerHand => playerHand.hand.kickers(index).value.id)
+      val topHands = players.groupBy(playerHand => playerHand.hand.kickers(index).value.id)
         .maxBy{case (rank, _) => -rank}._2
       if(topHands.length == 1)
         topHands
@@ -49,5 +47,4 @@ object HandComparator {
         resolveUsingKickers(topHands, index+1)
     }
   }
-
 }

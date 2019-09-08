@@ -1,20 +1,19 @@
 package com
 import com.Dealer._
 import com.Deck._
-import com.Domain.{Hand, PlayerHand}
+import com.Domain.Hand
 import com.HandComparator._
-import com.Suit._
-import com.CardValue._
 
 object Game {
 
-
+  def makePlayers(players: Int) : Seq[Player] =
+    (1 to players).map(id => Player(Hand(Seq(), Seq(), 0), id))
 
   def main(args: Array[String]): Unit = {
 
     val deck = shuffleDeck(createDeck())
 
-    val (players, newDeck) = dealToPlayers(deck, Seq(), 4)
+    val (players, newDeck) = dealToPlayers(deck, makePlayers(4))
 
     players.foreach(println)
     println()
@@ -33,10 +32,10 @@ object Game {
 
     val table = flop :+ turn :+ river
 
-    val hands = players.map(player => PlayerHand(player.makeHand(table), player.id))
-    hands.foreach(println)
+    val finalPlayerHands = players.map(player => Player(player.makeHand(table), player.id))
+    finalPlayerHands.foreach(println)
 
-    val winningHands = getWinningPlayerHand(hands)
+    val winningHands = getWinningPlayerHand(finalPlayerHands)
     if(winningHands.length == 1){
       println(s"Player ${winningHands.head.id} wins!")
     }

@@ -1,5 +1,5 @@
 package com
-import com.Domain.Deck
+import com.Domain.{Deck, Hand}
 
 import scala.annotation.tailrec
 import scala.util.Random.shuffle
@@ -21,21 +21,29 @@ object Dealer {
     shuffle(deck)
   }
 
-  @tailrec
-  def dealToPlayers(deck: Deck, players: Seq[Player], numPlayers: Int): (Seq[Player], Deck) ={
-    if(numPlayers == players.length)
-      (players, deck)
-    else{
-      val (cards, newDeck) = dealToPlayer(deck)
-      dealToPlayers(newDeck, players :+ Player(cards, players.length + 1), numPlayers)
+  def dealToPlayers(deck: Deck, players: Seq[Player]): (Seq[Player], Deck) ={
+    @tailrec
+    def dealRound(deck: Deck, players: Seq[Player], player: Int): (Seq[Player], Deck) ={
+      if(player == players.length)
+        (players, deck)
+      else{
+        val (updatedPlayer, newDeck) = dealToPlayer(players(player), deck)
+        val updatedPlayers = (players.filter(p => p.id != player +1) :+ updatedPlayer).sortBy(p => p.id)
+        dealRound(newDeck,updatedPlayers, player + 1)
+      }
     }
+
+    val round1 = dealRound(deck, players, 0)
+    dealRound(round1._2, round1._1, 0)
 
   }
 
-  private def dealToPlayer(deck: Deck): (Seq[Card], Deck) = {
-    val deal1 = dealCard(deck)
-    val deal2 = dealCard(deal1._2)
-    (Seq(deal1._1, deal2._1), deal2._2)
+  def dealToPlayer(player: Player, deck: Deck): (Player, Deck) ={
+    val (card, newDeck) = dealCard(deck)
+    val hand = Hand(player.hand.scoringCards, player.hand.kickers :+ card, player.hand.rank)
+    val updatedPlayer = Player(hand, player.id)
+    val updatedHand = updatedPlayer.makeHand(Seq())
+    (Player(updatedHand, player.id), newDeck)
   }
 
   def dealFlop(deck: Deck): (Seq[Card], Deck) = {
