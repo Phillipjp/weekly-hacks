@@ -25,7 +25,7 @@ object HandComparator {
     if(index == players.head.hand.scoringCards.length)
       players
     else{
-      val topHands = players.groupBy(playerHand => playerHand.hand.scoringCards(index).value.id)
+      val topHands = players.groupBy(player => player.hand.scoringCards(index).value.id)
         .maxBy{case (rank, _) => rank}._2
       if(topHands.length == 1)
         topHands
@@ -39,8 +39,8 @@ object HandComparator {
     if(index == players.head.hand.kickers.length)
       players
     else{
-      val topHands = players.groupBy(playerHand => playerHand.hand.kickers(index).value.id)
-        .maxBy{case (rank, _) => -rank}._2
+      val topHands = players.groupBy(player => player.hand.kickers(index).value.id)
+        .maxBy{case (rank, _) => rank}._2
       if(topHands.length == 1)
         topHands
       else
