@@ -20,18 +20,8 @@ object HandComparator {
       resolveUsingKickers(topScoringCardsHands, 0)
   }
 
-  @tailrec
   private def resolveUsingScoringCards(players: Seq[Player], index: Int): Seq[Player] = {
-    if(index == players.head.hand.scoringCards.length)
-      players
-    else{
-      val topHands = players.groupBy(player => player.hand.scoringCards(index).value.id)
-        .maxBy{case (rank, _) => rank}._2
-      if(topHands.length == 1)
-        topHands
-      else
-        resolveUsingScoringCards(topHands, index+1)
-    }
+    players.groupBy(player => player.hand.scoringCards.map(_.value.id).sum).maxBy{case(handVal, _) => handVal}._2
   }
 
   @tailrec
