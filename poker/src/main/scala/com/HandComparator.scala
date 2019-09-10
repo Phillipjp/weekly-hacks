@@ -16,8 +16,10 @@ object HandComparator {
     val topScoringCardsHands = resolveUsingScoringCards(players, 0)
     if(topScoringCardsHands.length == 1 || topScoringCardsHands.head.hand.scoringCards.size == 5)
       topScoringCardsHands
-    else
-      resolveUsingKickers(topScoringCardsHands, 0)
+    else {
+      val kickersToUse = 5 - topScoringCardsHands.head.hand.scoringCards.size
+      resolveUsingKickers(topScoringCardsHands, kickersToUse, 0)
+    }
   }
 
   private def resolveUsingScoringCards(players: Seq[Player], index: Int): Seq[Player] = {
@@ -25,8 +27,8 @@ object HandComparator {
   }
 
   @tailrec
-  private def resolveUsingKickers(players: Seq[Player], index: Int): Seq[Player] = {
-    if(index == players.head.hand.kickers.length)
+  private def resolveUsingKickers(players: Seq[Player], kickersToUse: Int, index: Int): Seq[Player] = {
+    if(index == kickersToUse)
       players
     else{
       val topHands = players.groupBy(player => player.hand.kickers(index).value.id)
@@ -34,7 +36,7 @@ object HandComparator {
       if(topHands.length == 1)
         topHands
       else
-        resolveUsingKickers(topHands, index+1)
+        resolveUsingKickers(topHands, kickersToUse, index+1)
     }
   }
 }
