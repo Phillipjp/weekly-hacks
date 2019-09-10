@@ -14,7 +14,7 @@ object HandComparator {
 
   private def resolveDraw(players: Seq[Player]) : Seq[Player] = {
     val topScoringCardsHands = resolveUsingScoringCards(players, 0)
-    if(topScoringCardsHands.length == 1)
+    if(topScoringCardsHands.length == 1 || topScoringCardsHands.head.hand.scoringCards.size == 5)
       topScoringCardsHands
     else
       resolveUsingKickers(topScoringCardsHands, 0)

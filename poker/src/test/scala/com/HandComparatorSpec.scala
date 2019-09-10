@@ -28,6 +28,9 @@ class HandComparatorSpec extends FlatSpec with Matchers {
   private val player6 = Player(Hand(Seq(Card(HEART, Nine),Card(DIAMOND, Nine),Card(HEART, Seven),
     Card(DIAMOND, Seven)), Seq(Card(CLUB, Five), Card(CLUB, Three), Card(CLUB, Two)), pairRank), 5)
 
+  private val player7 = Player(Hand(Seq(Card(CLUB, Ace),Card(CLUB, King),Card(CLUB, Queen),
+    Card(CLUB, Jack),Card(CLUB, Ten)), Seq(Card(DIAMOND, Six), Card(DIAMOND, Two)), royalFlushRank), 7)
+
   it should "Pick the winning player when there isn't a draw between scoring cards" in {
     getWinningPlayerHand(Seq(player1, player2, player3, player4, player5)) shouldBe Seq(player1)
   }
@@ -42,6 +45,10 @@ class HandComparatorSpec extends FlatSpec with Matchers {
 
   it should "Pick the winning players when the two winning hands are identical apart from the suits" in {
     getWinningPlayerHand(Seq(player2, player3, player4, player5)) shouldBe Seq(player2, player3)
+  }
+
+  it should "Pick the winning players when the two winning hands are the same type and include 5 cards" in {
+    getWinningPlayerHand(Seq(player1, player7)) shouldBe Seq(player1, player7)
   }
 
 }
