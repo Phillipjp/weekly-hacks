@@ -19,11 +19,11 @@ class HandComparatorSpec extends FlatSpec with Matchers {
   private val player3 = Player(Hand(Seq(Card(HEART, Five),Card(DIAMOND, Five),Card(HEART, Four),
     Card(DIAMOND, Four)), Seq(Card(CLUB, Six), Card(CLUB, Three), Card(CLUB, Two)), twoPairRank), 3)
 
-  private val player4 = Player(Hand(Seq(Card(SPADE, Nine),Card(CLUB, Nine),Card(SPADE, Eight),
-    Card(CLUB, Eight)), Seq(Card(CLUB, Four), Card(CLUB, Three), Card(CLUB, Two)), pairRank), 4)
+  private val player4 = Player(Hand(Seq(Card(SPADE, Eight),Card(CLUB, Eight),Card(SPADE, Two),
+    Card(CLUB, Two)), Seq(Card(CLUB, Four), Card(CLUB, Three), Card(CLUB, Two)), pairRank), 4)
 
-  private val player5 = Player(Hand(Seq(Card(HEART, Nine),Card(DIAMOND, Nine),Card(HEART, Seven),
-    Card(DIAMOND, Seven)), Seq(Card(CLUB, Four), Card(CLUB, Three), Card(CLUB, Two)), pairRank), 5)
+  private val player5 = Player(Hand(Seq(Card(HEART, Six),Card(DIAMOND, Six),Card(HEART, Four),
+    Card(DIAMOND, Four)), Seq(Card(CLUB, Four), Card(CLUB, Three), Card(CLUB, Two)), pairRank), 5)
 
   private val player6 = Player(Hand(Seq(Card(HEART, Nine),Card(DIAMOND, Nine),Card(HEART, Seven),
     Card(DIAMOND, Seven)), Seq(Card(CLUB, Five), Card(CLUB, Three), Card(CLUB, Two)), pairRank), 5)
