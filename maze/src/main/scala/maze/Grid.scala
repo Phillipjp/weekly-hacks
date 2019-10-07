@@ -24,11 +24,27 @@ object Grid {
 
   def printGrid(maze: Maze, size: Int): Unit = {
 
-    val endCoords = maze.filter{case (coords, node) => node.lastEdge}.head._1
+    val endCoords = maze.filter{case (_, node) => node.finshNode}.head._1
+    printTopWall(size, endCoords)
+    for (x <- 0 until size) {
+      for (y <- 0 until size) {
+        val node = maze((x, y))
+        if (node.finshNode) {
+          printFinishNode(size, x, y, node)
+        }
+        else {
+          printNode(size, y, node)
+        }
+      }
+      println()
+    }
+  }
+
+  private def printTopWall(size: Int, endCoords: (Int, Int)) = {
     print(" ")
-    if(endCoords._1 == 0){
+    if (endCoords._1 == 0) {
       for (i <- 0 until size) {
-        if(i == endCoords._2) print("  ")
+        if (i == endCoords._2) print("  ")
         else print("_ ")
       }
     }
@@ -38,47 +54,42 @@ object Grid {
       }
     }
     println()
-    for (i <- 0 until size) {
-      for (j <- 0 until size) {
-        val node = maze((i, j))
-        if (node.lastEdge) {
-          (i,j) match {
-            case s if s._1 == 0 =>
-              if(node.bottomWall && node.leftWall) print("|_")
-              else if(node.bottomWall) print(" _")
-              else if(node.leftWall) print("| ")
-              else print("  ")
-            case s if s._2 == 0 =>
-              if(node.bottomWall) print(" _")
-              else print("  ")
-            case s if s._1 == size-1 =>
-              if(node.leftWall) print("| ")
-              else print("  ")
-            case s if s._2 == size-1 =>
-              if(node.bottomWall && node.leftWall) print("|_")
-              else if(node.bottomWall) print(" _")
-              else if(node.leftWall) print("| ")
-              else print("  ")
-
-          }
-        }
-        else {
-          val walls = (node.leftWall, node.bottomWall)
-          walls match {
-            case (true, true) =>
-              print("|_")
-            case (true, false) =>
-              print("| ")
-            case (false, true) =>
-              print(" _")
-            case (false, false) =>
-              print("  ")
-          }
-          if(j == size-1) print("|")
-        }
-      }
-      println()
-    }
   }
 
+  private def printNode(size: Int, y: Int, node: Node) = {
+    val walls = (node.leftWall, node.bottomWall)
+    walls match {
+      case (true, true) =>
+        print("|_")
+      case (true, false) =>
+        print("| ")
+      case (false, true) =>
+        print(" _")
+      case (false, false) =>
+        print("  ")
+    }
+    if (y == size - 1) print("|")
+  }
+
+  private def printFinishNode(size: Int, i: Int, j: Int, node: Node) = {
+    (i, j) match {
+      case s if s._1 == 0 =>
+        if (node.bottomWall && node.leftWall) print("|_")
+        else if (node.bottomWall) print(" _")
+        else if (node.leftWall) print("| ")
+        else print("  ")
+      case s if s._2 == 0 =>
+        if (node.bottomWall) print(" _")
+        else print("  ")
+      case s if s._1 == size - 1 =>
+        if (node.leftWall) print("| ")
+        else print("  ")
+      case s if s._2 == size - 1 =>
+        if (node.bottomWall && node.leftWall) print("|_")
+        else if (node.bottomWall) print(" _")
+        else if (node.leftWall) print("| ")
+        else print("  ")
+
+    }
+  }
 }

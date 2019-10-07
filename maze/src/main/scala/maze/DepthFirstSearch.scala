@@ -10,7 +10,6 @@ object DepthFirstSearch {
     val startCoords = (0,0)
 
     def depthFirstSearch(nodeCoords: Coord, queue: Seq[Coord], maze: Maze, size: Int): Maze = {
-//      Grid.printGrid(maze, size+1)
       val newQueue = queue :+ nodeCoords
       val node = maze(nodeCoords)
       val visitedMaze = maze + (nodeCoords -> Node(visited = true, leftWall = node.leftWall, bottomWall = node.bottomWall, edgeQueueNumber = node.edgeQueueNumber))
@@ -33,10 +32,14 @@ object DepthFirstSearch {
 
     }
     val finishedMaze = depthFirstSearch(startCoords, Seq(), maze, size)
+    addStartAndEnd(startCoords, finishedMaze)
+  }
+
+  private def addStartAndEnd(startCoords: (Int, Int), finishedMaze: Maze) = {
     val startNode = finishedMaze(startCoords)
     val startMaze = finishedMaze + (startCoords -> Node(startNode.visited, leftWall = false, startNode.bottomWall))
-    val (endNodeCoords, endNode) = startMaze.maxBy{case (coords, node) => node.edgeQueueNumber}
-    startMaze + (endNodeCoords -> Node(visited = endNode.visited, leftWall = endNode.leftWall, bottomWall = endNode.bottomWall, edgeQueueNumber = endNode.edgeQueueNumber, lastEdge = true))
+    val (endNodeCoords, endNode) = startMaze.maxBy { case (_, node) => node.edgeQueueNumber }
+    startMaze + (endNodeCoords -> Node(visited = endNode.visited, leftWall = endNode.leftWall, bottomWall = endNode.bottomWall, edgeQueueNumber = endNode.edgeQueueNumber, finshNode = true))
   }
 
   private def updateMaze(nodeCoords: (Int, Int), size: Int, newQueue: Seq[(Int, Int)], visitedMaze: Map[(Int, Int), Node], nextNodeCoords: (Int, Int)) = {
