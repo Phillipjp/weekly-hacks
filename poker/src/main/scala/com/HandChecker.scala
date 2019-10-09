@@ -53,9 +53,9 @@ object HandChecker {
   def isTwoNOfAKinds(cards: Seq[Card], n: Int): Boolean =
     cards.groupBy(c => c.value).mapValues(_.size).values.count(_ == n) == 2
 
-  def atleastMoccurencesOfNOfAKind(cards: Seq[Card], m: Int, n: Int): Boolean =
+  def atleastMOccurencesOfNOfAKind(cards: Seq[Card], m: Int, n: Int): Boolean =
     cards.groupBy(c => c.value).mapValues(_.size).values.count(_ == n) >= m
 
   def isTwoPair(cards: Seq[Card]): Boolean =
-    atleastMoccurencesOfNOfAKind(cards, 2, 2)
+    atleastMOccurencesOfNOfAKind(cards, 2, 2)
 }
