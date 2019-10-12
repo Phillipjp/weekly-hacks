@@ -1,19 +1,25 @@
 package wordfunnel
 
+import scala.annotation.tailrec
+
 object WordFunnel {
 
-  def funnel(word: String, funnelLength: Int, dictionary: Seq[String], funnelingFunc: (String, Seq[String]) => Seq[String]): Int = {
+  def funnel(words: Seq[String], dictionary: Set[String], funnelingFunc: (String, Set[String]) => Seq[String]): Int = {
 
-    if(word.length == 2)
-      funnelLength
-    else{
-      val funneledWords = funnelingFunc(word, dictionary)
+    @tailrec
+    def getFunnel(words: Seq[String], funnelLength: Int, dictionary: Set[String], funnelingFunc: (String, Set[String]) => Seq[String]): Int = {
+
+      val funneledWords = words.flatMap(word => funnelingFunc(word, dictionary))
 
       if(funneledWords.isEmpty)
-          funnelLength
+        funnelLength
       else
-        funneledWords.map(funneledWord => funnel(funneledWord, funnelLength+1, dictionary, funnelingFunc)).max
+        getFunnel(funneledWords, funnelLength+1, dictionary, funnelingFunc)
+
     }
+    getFunnel(words, 1, dictionary, funnelingFunc)
+
   }
+
 
 }

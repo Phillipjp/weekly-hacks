@@ -2,9 +2,9 @@ package wordfunnel
 
 object DictionaryReader {
 
-  def readInDictionary(path: String): Seq[String]={
+  def readInDictionary(path: String): Set[String]={
     val source = scala.io.Source.fromFile(path)
-    val lines = source.getLines().toSeq
+    val lines = source.getLines().toSet
     lines
   }
 
