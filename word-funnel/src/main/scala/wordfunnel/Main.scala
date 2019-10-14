@@ -6,7 +6,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val dict = DictionaryReader.readInDictionary("/Users/phillipperks/Documents/repos/weekly-hacks/word-funnel/src/main/resources/enable1.txt")
-//    val maxFunnelLength = funnel(Seq("gnash"), dict, getFunneledWords)
+//    val maxFunnelLength = funnel(Seq("preformationists"), dict, getFunneledWords2)
 //    println(maxFunnelLength)
 //
     /*Bonus 1*/
@@ -19,5 +19,6 @@ object Main {
     biggestFunnel2.foreach(println)
     //(contradictorinesses,12)
     //(preformationists,12)
+    //(noncooperationists,12)
   }
 }
