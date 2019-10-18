@@ -1,0 +1,26 @@
+package roguelike
+
+import roguelike.Dice.rollDice
+
+
+object Weapons {
+
+  trait Weapon {
+
+    val toHit: Int
+    val diceDamage: () => Int
+    val modifier: Int
+
+    def dealDamage(): Int = {
+      diceDamage() + modifier
+    }
+
+  }
+
+  case class Axe(toHit: Int = 5, diceDamage: () => Int = rollDice(1,12), modifier: Int = 0) extends Weapon
+
+  case class Scimitar(toHit: Int = 4, diceDamage: () => Int = rollDice(1,6), modifier: Int = 2) extends Weapon
+
+  case class ShortSword(toHit: Int = 5, diceDamage: () => Int = rollDice(1,6), modifier: Int = 3) extends Weapon
+
+}

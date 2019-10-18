@@ -1,0 +1,6 @@
+package roguelike
+
+object Main {
+
+
+}
