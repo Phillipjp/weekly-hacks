@@ -5,7 +5,7 @@ import roguelike.Dice.rollDice
 
 object Weapons{
 
-  trait Weapon extends Displayable {
+sealed trait Weapon extends Displayable {
 
     val toHit: Int
     val diceDamage: () => Int
