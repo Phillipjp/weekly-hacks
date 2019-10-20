@@ -38,11 +38,11 @@ object Game extends App{
   }
 
   private def endTurn(player: Human, opponent: Race): Unit = {
-    println(s"You defeated the ${opponent.displayName}")
+    val gold = rollDice(1,3)
+    println(s"You defeated the ${opponent.displayName}. You looted $gold gold piece(s) from the body.")
     println(s"You have ${player.hitPoints} hit points remaining")
     println("Do you wish to continue into the dungeon? (y/n)")
     val input = scala.io.StdIn.readLine().toLowerCase
-    val gold = rollDice(1,3)
     val updatedPlayed = Human(player.hitPoints, player.amourClass, player.weapon, player.gold + gold)
     if(input.equals("y"))
       turn(updatedPlayed, getOpponent)
@@ -57,17 +57,23 @@ object Game extends App{
       val attackDamage = attacker.weapon.dealDamage()
       defender match {
         case goblin: Goblin =>
-          println(s"You dealt $attackDamage to the Goblin")
+          println(s"You dealt $attackDamage damage to the ${defender.displayName}")
           goblin.copy(hitPoints = defender.hitPoints - attackDamage)
         case hobGoblin: HobGoblin =>
-          println(s"You dealt $attackDamage to the Hob Goblin")
+          println(s"You dealt $attackDamage damage to the ${defender.displayName}")
           hobGoblin.copy(hitPoints = defender.hitPoints - attackDamage)
         case human: Human =>
-          println(s"The $attacker dealt $attackDamage damage to you")
+          println(s"The ${attacker.displayName} dealt $attackDamage damage to you")
           human.copy(hitPoints = defender.hitPoints - attackDamage)
       }
     }
     else {
+      attacker match {
+        case human: Human =>
+          println("Your attack missed")
+        case enemy: Race =>
+          println(s"The ${enemy.displayName}'s attack missed")
+      }
       defender
     }
   }

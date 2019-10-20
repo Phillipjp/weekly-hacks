@@ -3,7 +3,7 @@ package roguelike
 import roguelike.Dice.rollDice
 
 
-object Weapons {
+object Weapons extends Displayable{
 
   trait Weapon {
 
@@ -17,10 +17,16 @@ object Weapons {
 
   }
 
-  case class Axe(toHit: Int = 5, diceDamage: () => Int = rollDice(1,12), modifier: Int = 0) extends Weapon
+  case class Axe(toHit: Int = 5, diceDamage: () => Int = rollDice(1,12), modifier: Int = 0) extends Weapon{
+    def displayName: String = "Axe"
+  }
 
-  case class Scimitar(toHit: Int = 4, diceDamage: () => Int = rollDice(1,6), modifier: Int = 2) extends Weapon
+  case class Scimitar(toHit: Int = 4, diceDamage: () => Int = rollDice(1,6), modifier: Int = 2) extends Weapon{
+    def displayName: String = "Scimitar"
+  }
 
-  case class ShortSword(toHit: Int = 5, diceDamage: () => Int = rollDice(1,6), modifier: Int = 3) extends Weapon
+  case class ShortSword(toHit: Int = 5, diceDamage: () => Int = rollDice(1,6), modifier: Int = 3) extends Weapon{
+    def displayName: String = "Short Sword"
+  }
 
 }
