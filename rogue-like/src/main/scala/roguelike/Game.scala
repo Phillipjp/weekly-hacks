@@ -69,7 +69,7 @@ object Game extends App{
     }
     else {
       attacker match {
-        case human: Human =>
+        case _: Human =>
           println("Your attack missed")
         case enemy: Race =>
           println(s"The ${enemy.displayName}'s attack missed")

@@ -3,9 +3,9 @@ package roguelike
 import roguelike.Dice.rollDice
 
 
-object Weapons extends Displayable{
+object Weapons{
 
-  trait Weapon {
+  trait Weapon extends Displayable {
 
     val toHit: Int
     val diceDamage: () => Int
