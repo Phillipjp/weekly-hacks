@@ -1,6 +1,6 @@
 package roguelike
 
-import roguelike.Races.{Goblin, HobGoblin, Human, Race}
+import roguelike.Races._
 import roguelike.Dice._
 
 import scala.annotation.tailrec
@@ -62,6 +62,9 @@ object Game extends App{
         case hobGoblin: HobGoblin =>
           println(s"You dealt $attackDamage damage to the ${defender.displayName}")
           hobGoblin.copy(hitPoints = defender.hitPoints - attackDamage)
+        case orc: Orc =>
+          println(s"You dealt $attackDamage damage to the ${defender.displayName}")
+          orc.copy(hitPoints = defender.hitPoints - attackDamage)
         case human: Human =>
           println(s"The ${attacker.displayName} dealt $attackDamage damage to you")
           human.copy(hitPoints = defender.hitPoints - attackDamage)
@@ -79,13 +82,18 @@ object Game extends App{
   }
 
   private def getOpponent: Race = {
-     if (Random.nextInt(100) % 2 == 0) {
+    val prob = Random.nextInt(100)
+     if (prob < 33) {
        println("A Goblin Appeared")
        Goblin()
      }
-    else {
+    else if(prob < 66){
        println("A Hob Goblin Appeared")
       HobGoblin()
     }
+    else{
+       println("An Orc Appeared")
+       Orc()
+     }
   }
 }

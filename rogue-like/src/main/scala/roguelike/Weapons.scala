@@ -29,4 +29,8 @@ sealed trait Weapon extends Displayable {
     def displayName: String = "Short Sword"
   }
 
+  case class Sword(toHit: Int = 5, diceDamage: () => Int = rollDice(1,6), modifier: Int = 4) extends Weapon{
+    def displayName: String = "Sword"
+  }
+
 }
