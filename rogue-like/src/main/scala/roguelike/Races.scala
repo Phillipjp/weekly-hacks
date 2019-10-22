@@ -13,19 +13,20 @@ object Races{
     def attack() : Int
   }
 
-  trait Gold {
-    val gold: Int
-  }
-
   trait Healer {
     val healingPotions: Int
 
     def heal(): Human
   }
 
+  trait Looter {
+
+    def loot(enemy: Race): Race
+  }
+
   private val humanHitPoints = 16
 
-  case class Human(hitPoints: Int = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1) extends Race with Gold with Healer {
+  case class Human(hitPoints: Int = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1) extends Race with Healer with Looter {
 
     def attack(): Int = weapon.dealDamage()
 

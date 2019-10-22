@@ -62,7 +62,7 @@ object Game extends App{
   private def attack(attacker: Race, defender: Race): Race ={
     val armourRoll = rollDice(1,20)
     val canAttack = armourRoll + attacker.weapon.toHit > defender.amourClass
-      val attackDamage = attacker.attack()
+    val attackDamage = attacker.attack()
       defender match {
         case goblin: Goblin if canAttack =>
           println(s"You dealt $attackDamage damage to the ${defender.displayName}")
