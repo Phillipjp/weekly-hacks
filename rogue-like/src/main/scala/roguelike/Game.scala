@@ -61,32 +61,28 @@ object Game extends App{
 
   private def attack(attacker: Race, defender: Race): Race ={
     val armourRoll = rollDice(1,20)
-    if(armourRoll + attacker.weapon.toHit > defender.amourClass ){
-      val attackDamage = attacker.attack
+    val canAttack = armourRoll + attacker.weapon.toHit > defender.amourClass
+      val attackDamage = attacker.attack()
       defender match {
-        case goblin: Goblin =>
+        case goblin: Goblin if canAttack =>
           println(s"You dealt $attackDamage damage to the ${defender.displayName}")
           goblin.copy(hitPoints = defender.hitPoints - attackDamage)
-        case hobGoblin: HobGoblin =>
+        case hobGoblin: HobGoblin if canAttack =>
           println(s"You dealt $attackDamage damage to the ${defender.displayName}")
           hobGoblin.copy(hitPoints = defender.hitPoints - attackDamage)
-        case orc: Orc =>
+        case orc: Orc if canAttack =>
           println(s"You dealt $attackDamage damage to the ${defender.displayName}")
           orc.copy(hitPoints = defender.hitPoints - attackDamage)
-        case human: Human =>
+        case human: Human if canAttack =>
           println(s"The ${attacker.displayName} dealt $attackDamage damage to you")
           human.copy(hitPoints = defender.hitPoints - attackDamage)
-      }
-    }
-    else {
-      attacker match {
-        case _: Human =>
-          println("Your attack missed")
+        case human: Human =>
+          println(s"The ${attacker.displayName}'s attack missed")
+          human
         case enemy: Race =>
-          println(s"The ${enemy.displayName}'s attack missed")
+          println("Your attack missed")
+          enemy
       }
-      defender
-    }
   }
 
   private def getOpponent: Race = {

@@ -23,7 +23,7 @@ object Races{
     def heal(): Human
   }
 
-  val humanHitPoints = 16
+  private val humanHitPoints = 16
 
   case class Human(hitPoints: Int = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1) extends Race with Gold with Healer {
 
@@ -44,10 +44,8 @@ object Races{
 
     def loot(enemy: Race): Human = {
       val lootedGold = rollDice(1,3)
-      val lootHealProb = rollDice(1,4)
-      println(s"loot heal prob: $lootHealProb")
       enemy match {
-        case _: Orc if lootHealProb == 1 =>
+        case _: Orc if rollDice(1,4) == 1 =>
           println(s"Found $lootedGold gold piece(s) and 1 healing potion.")
           this.copy(gold = gold + lootedGold, healingPotions = healingPotions +1)
         case _ =>
