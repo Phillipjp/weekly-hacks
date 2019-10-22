@@ -42,6 +42,20 @@ object Races{
       }
     }
 
+    def loot(enemy: Race): Human = {
+      val lootedGold = rollDice(1,3)
+      val lootHealProb = rollDice(1,4)
+      println(s"loot heal prob: $lootHealProb")
+      enemy match {
+        case _: Orc if lootHealProb == 1 =>
+          println(s"Found $lootedGold gold piece(s) and 1 healing potion.")
+          this.copy(gold = gold + lootedGold, healingPotions = healingPotions +1)
+        case _ =>
+          println(s"Found $lootedGold gold piece(s).")
+          this.copy(gold = gold + lootedGold)
+      }
+    }
+
   }
 
   case class Goblin(hitPoints: Int = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar()) extends Race{
