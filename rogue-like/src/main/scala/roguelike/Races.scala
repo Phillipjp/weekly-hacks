@@ -1,6 +1,7 @@
 package roguelike
 
 import roguelike.Weapons._
+import roguelike.Dice.rollDice
 
 object Races{
 
@@ -43,23 +44,23 @@ object Races{
 
   }
 
-  case class Goblin(hitPoints: Int = 4, amourClass: Int = 10, weapon: Weapon = Scimitar()) extends Race{
+  case class Goblin(hitPoints: Int = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar()) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
     def displayName: String = "Goblin"
   }
 
-  case class HobGoblin(hitPoints: Int = 6, amourClass: Int = 10, weapon: Weapon = ShortSword()) extends Race{
+  case class HobGoblin(hitPoints: Int = rollDice(1,6), amourClass: Int = 10, weapon: Weapon = ShortSword()) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
     def displayName: String = "Hob Goblin"
   }
 
-  case class Orc (hitPoints: Int = 8, amourClass: Int = 12, weapon: Weapon = Sword()) extends Race{
+  case class Orc (hitPoints: Int = rollDice(1,10), amourClass: Int = 12, weapon: Weapon = Sword()) extends Race{
 
-    def attack(): Int = weapon.dealDamage
+    def attack(): Int = weapon.dealDamage()
 
     def displayName: String = "Orc"
 
