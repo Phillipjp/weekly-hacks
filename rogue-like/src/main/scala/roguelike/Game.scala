@@ -40,15 +40,26 @@ object Game extends App{
   private def endTurn(player: Human, opponent: Race): Unit = {
     val gold = rollDice(1,3)
     println(s"You defeated the ${opponent.displayName}. You looted $gold gold piece(s) from the body.")
-    println(s"You have ${player.hitPoints} hit points remaining")
+
+    val healedPlayer = healPlayer(player)
+
     println("Do you wish to continue into the dungeon? (y/n)")
-    val input = scala.io.StdIn.readLine().toLowerCase
-    val updatedPlayed = Human(player.hitPoints, player.amourClass, player.weapon, player.gold + gold)
-    if(input.equals("y"))
+    val carryOn = scala.io.StdIn.readLine().toLowerCase
+    val updatedPlayed = healedPlayer.copy(gold = healedPlayer.gold + gold)
+    if(carryOn.equals("y"))
       turn(updatedPlayed, getOpponent)
     else
       println(s"You survived the dungeon with ${updatedPlayed.gold} gold pieces")
 
+  }
+
+  private def healPlayer(player: Human): Human = {
+    println(s"You have ${player.hitPoints} hit points remaining. Do you wish to heal?")
+    val heal = scala.io.StdIn.readLine().toLowerCase
+    heal match {
+      case "y" => player.heal()
+      case _ => player
+    }
   }
 
   private def attack(attacker: Race, defender: Race): Race ={
