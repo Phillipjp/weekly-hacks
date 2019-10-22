@@ -51,7 +51,7 @@ object Game extends App{
   }
 
   private def healPlayer(player: Human): Human = {
-    println(s"You have ${player.hitPoints} hit points remaining. Do you wish to heal? (y/n)")
+    println(s"You have ${player.hitPoints} hit points remaining and ${player.healingPotions} healing potions. Do you wish to heal? (y/n)")
     val heal = scala.io.StdIn.readLine().toLowerCase
     heal match {
       case "y" => player.heal()
