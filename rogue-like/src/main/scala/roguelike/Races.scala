@@ -44,14 +44,21 @@ object Races{
     }
 
     def loot(enemy: Race): Human = {
+      println(s"Do you want to take the ${enemy.displayName}'s ${enemy.weapon.displayName} instead of your ${this.weapon.displayName}? (y/n)")
+      val lootWeapon = scala.io.StdIn.readLine().toLowerCase
+      val newWeapon = if(lootWeapon.equals("y"))
+        enemy.weapon
+      else
+        this.weapon
+
       val lootedGold = rollDice(1,3)
       enemy match {
         case _: Orc if rollDice(1,4) == 1 =>
           println(s"Found $lootedGold gold piece(s) and 1 healing potion.")
-          this.copy(gold = gold + lootedGold, healingPotions = healingPotions +1)
+          this.copy(weapon = newWeapon, gold = gold + lootedGold, healingPotions = healingPotions +1)
         case _ =>
           println(s"Found $lootedGold gold piece(s).")
-          this.copy(gold = gold + lootedGold)
+          this.copy(weapon = newWeapon, gold = gold + lootedGold)
       }
     }
 

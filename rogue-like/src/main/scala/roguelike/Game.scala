@@ -12,8 +12,9 @@ object Game extends App{
   playGame()
 
   def playGame(): Unit = {
-
-    turn(Human(), getOpponent)
+    val player = Human()
+    println(s"You entered the dungeon wielding a ${player.weapon.displayName}")
+    turn(player, getOpponent)
 
   }
 
@@ -87,17 +88,16 @@ object Game extends App{
 
   private def getOpponent: Race = {
     val prob = Random.nextInt(100)
-     if (prob < 33) {
-       println("A Goblin Appeared")
-       Goblin()
+     val enemy = prob match{
+       case _ if prob < 33 =>
+         Goblin()
+       case _ if prob < 66 =>
+         HobGoblin()
+       case _ if prob < 100 =>
+         Orc()
      }
-    else if(prob < 66){
-       println("A Hob Goblin Appeared")
-      HobGoblin()
-    }
-    else{
-       println("An Orc Appeared")
-       Orc()
-     }
+    println(s"A wild ${enemy.displayName} appeared wielding a ${enemy.weapon.displayName}.")
+    enemy
+
   }
 }
