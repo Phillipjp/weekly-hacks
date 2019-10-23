@@ -44,12 +44,7 @@ object Races{
     }
 
     def loot(enemy: Race): Human = {
-      println(s"Do you want to take the ${enemy.displayName}'s ${enemy.weapon.displayName} instead of your ${this.weapon.displayName}? (y/n)")
-      val lootWeapon = scala.io.StdIn.readLine().toLowerCase
-      val newWeapon = if(lootWeapon.equals("y"))
-        enemy.weapon
-      else
-        this.weapon
+      val newWeapon: Weapon = lootWeapon(enemy)
 
       val lootedGold = rollDice(1,3)
       enemy match {
@@ -62,6 +57,14 @@ object Races{
       }
     }
 
+    private def lootWeapon(enemy: Race) = {
+      println(s"Do you want to take the ${enemy.displayName}'s ${enemy.weapon.displayName} instead of your ${this.weapon.displayName}? (y/n)")
+      val lootWeapon = scala.io.StdIn.readLine().toLowerCase
+      if (lootWeapon.equals("y"))
+        enemy.weapon
+      else
+        this.weapon
+    }
   }
 
   case class Goblin(hitPoints: Int = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar()) extends Race{
