@@ -2,11 +2,12 @@ package roguelike
 
 import roguelike.Races._
 import roguelike.Dice._
+import roguelike.Statuses.{Burnt, Frozen, Shocked}
 
 import scala.annotation.tailrec
 import scala.util.Random
 
-object Game extends App{
+object Game extends App {
 
 
   playGame()
@@ -21,21 +22,37 @@ object Game extends App{
   @tailrec
   def turn(player: Human, opponent: Race): Unit = {
 
-    val attackedOpponent = attack(player, opponent)
+    val (postAttackPlayer: Race, attackedOpponent: Race) = attackWithStatusEffect(player, opponent)
 
-    if(attackedOpponent.hitPoints < 1){
-      endTurn(player, attackedOpponent)
+    if (attackedOpponent.hitPoints < 1) {
+      endTurn(postAttackPlayer.asInstanceOf[Human], attackedOpponent)
     }
-    else{
-      val attackedPlayer = attack(attackedOpponent, player).asInstanceOf[Human]
-      if(attackedPlayer.hitPoints < 1){
+    else {
+      val (postAttackOpponent, attackedPlayer) = attackWithStatusEffect(attackedOpponent, postAttackPlayer.asInstanceOf[Human])
+
+      if (attackedPlayer.hitPoints < 1) {
         println(s"Game over! You died with ${player.gold} gold pieces")
       }
-      else{
-        turn(attackedPlayer, attackedOpponent)
+      else {
+        turn(attackedPlayer.asInstanceOf[Human], postAttackOpponent)
       }
     }
 
+  }
+
+  private def attackWithStatusEffect(attacker: Race, defender: Race) = {
+    attacker.status match {
+      case _: Shocked =>
+        (attacker.statusEffect(), defender)
+      case _ =>
+        val attackedOpponent = attack(attacker, defender)
+        val statusOpponent = attackedOpponent.status match {
+          case _: Burnt => attackedOpponent.statusEffect()
+          case _: Frozen => attackedOpponent.statusEffect()
+          case _ => attackedOpponent
+        }
+        (attacker, statusOpponent)
+    }
   }
 
   private def endTurn(player: Human, opponent: Race): Unit = {
@@ -44,7 +61,7 @@ object Game extends App{
     val healedPlayer = healPlayer(updatedPlayed)
     println("Do you wish to continue into the dungeon? (y/n)")
     val carryOn = scala.io.StdIn.readLine().toLowerCase
-    if(carryOn.equals("y"))
+    if (carryOn.equals("y"))
       turn(healedPlayer, getOpponent)
     else
       println(s"You survived the dungeon with ${healedPlayer.gold} gold pieces")
@@ -60,42 +77,42 @@ object Game extends App{
     }
   }
 
-  private def attack(attacker: Race, defender: Race): Race ={
-    val armourRoll = rollDice(1,20)
+  private def attack(attacker: Race, defender: Race): Race = {
+    val armourRoll = rollDice(1, 20)
     val canAttack = armourRoll + attacker.weapon.toHit > defender.amourClass
     val attackDamage = attacker.attack()
-      defender match {
-        case goblin: Goblin if canAttack =>
-          println(s"You dealt $attackDamage damage to the ${defender.displayName}")
-          goblin.copy(hitPoints = defender.hitPoints - attackDamage)
-        case hobGoblin: HobGoblin if canAttack =>
-          println(s"You dealt $attackDamage damage to the ${defender.displayName}")
-          hobGoblin.copy(hitPoints = defender.hitPoints - attackDamage)
-        case orc: Orc if canAttack =>
-          println(s"You dealt $attackDamage damage to the ${defender.displayName}")
-          orc.copy(hitPoints = defender.hitPoints - attackDamage)
-        case human: Human if canAttack =>
-          println(s"The ${attacker.displayName} dealt $attackDamage damage to you")
-          human.copy(hitPoints = defender.hitPoints - attackDamage)
-        case human: Human =>
-          println(s"The ${attacker.displayName}'s attack missed")
-          human
-        case enemy: Race =>
-          println("Your attack missed")
-          enemy
-      }
+    defender match {
+      case goblin: Goblin if canAttack =>
+        println(s"You dealt $attackDamage damage to the ${defender.displayName}")
+        goblin.copy(hitPoints = defender.hitPoints - attackDamage, status = attacker.weapon.specialAttack())
+      case hobGoblin: HobGoblin if canAttack =>
+        println(s"You dealt $attackDamage damage to the ${defender.displayName}")
+        hobGoblin.copy(hitPoints = defender.hitPoints - attackDamage, status = attacker.weapon.specialAttack())
+      case orc: Orc if canAttack =>
+        println(s"You dealt $attackDamage damage to the ${defender.displayName}")
+        orc.copy(hitPoints = defender.hitPoints - attackDamage, status = attacker.weapon.specialAttack())
+      case human: Human if canAttack =>
+        println(s"The ${attacker.displayName} dealt $attackDamage damage to you")
+        human.copy(hitPoints = defender.hitPoints - attackDamage)
+      case human: Human =>
+        println(s"The ${attacker.displayName}'s attack missed")
+        human
+      case enemy: Race =>
+        println("Your attack missed")
+        enemy
+    }
   }
 
   private def getOpponent: Race = {
     val prob = Random.nextInt(100)
-     val enemy = prob match{
-       case _ if prob < 33 =>
-         Goblin()
-       case _ if prob < 66 =>
-         HobGoblin()
-       case _ if prob < 100 =>
-         Orc()
-     }
+    val enemy = prob match {
+      case _ if prob < 33 =>
+        Goblin()
+      case _ if prob < 66 =>
+        HobGoblin()
+      case _ if prob < 100 =>
+        Orc()
+    }
     println(s"A wild ${enemy.displayName} appeared wielding a ${enemy.weapon.displayName}.")
     enemy
 

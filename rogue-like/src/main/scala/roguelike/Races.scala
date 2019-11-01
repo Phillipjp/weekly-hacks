@@ -2,6 +2,7 @@ package roguelike
 
 import roguelike.Weapons._
 import roguelike.Dice.rollDice
+import roguelike.Statuses._
 
 object Races{
 
@@ -9,8 +10,11 @@ object Races{
     val hitPoints: Int
     val amourClass: Int
     val weapon: Weapon
+    val status: Status
 
     def attack() : Int
+
+    def statusEffect(): Race
   }
 
   trait Healer {
@@ -26,7 +30,7 @@ object Races{
 
   private val humanHitPoints = 16
 
-  case class Human(hitPoints: Int = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1) extends Race with Healer with Looter {
+  case class Human(hitPoints: Int = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1, status: Status = Normal()) extends Race with Healer with Looter {
 
     def attack(): Int = weapon.dealDamage()
 
@@ -65,27 +69,119 @@ object Races{
       else
         this.weapon
     }
+
+    override def statusEffect(): Race = {
+      val character = status match {
+        case burnt: Burnt =>
+          val statusDamage = burnt.applyStatusEffect
+          println(s"You're burnt. You lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=burnt.copy(turnCount = burnt.turnCount-1))
+        case frozen: Frozen =>
+          val statusDamage = frozen.applyStatusEffect
+          println(s"You're frozen. You lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=frozen.copy(turnCount = frozen.turnCount-1))
+        case shocked: Shocked =>
+          println("You're shocked. You can't move and miss a go.")
+          this.copy(status=shocked.copy(turnCount = shocked.turnCount-1))
+        case _: Normal =>
+          this.copy()
+      }
+
+      if (character.status.turnCount == 0)
+        character.copy(status = Normal())
+      else
+        character
+    }
   }
 
-  case class Goblin(hitPoints: Int = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar()) extends Race{
+  case class Goblin(hitPoints: Int = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar(), status: Status = Normal()) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
     def displayName: String = "Goblin"
+
+    override def statusEffect(): Race = {
+      val character = status match {
+        case burnt: Burnt =>
+          val statusDamage = burnt.applyStatusEffect
+          println(s"The $displayName is burnt. It lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=burnt.copy(turnCount = burnt.turnCount-1))
+        case frozen: Frozen =>
+          val statusDamage = frozen.applyStatusEffect
+          println(s"The $displayName is frozen. It lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=frozen.copy(turnCount = frozen.turnCount-1))
+        case shocked: Shocked =>
+          println(s"The $displayName is shocked. It can't move and misses a go.")
+          this.copy(status=shocked.copy(turnCount = shocked.turnCount-1))
+        case _: Normal =>
+          this.copy()
+      }
+
+      if (character.status.turnCount == 0)
+        character.copy(status = Normal())
+      else
+        character
+    }
   }
 
-  case class HobGoblin(hitPoints: Int = rollDice(1,6), amourClass: Int = 10, weapon: Weapon = ShortSword()) extends Race{
+  case class HobGoblin(hitPoints: Int = rollDice(1,6), amourClass: Int = 10, weapon: Weapon = ShortSword(), status: Status = Normal()) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
     def displayName: String = "Hob Goblin"
+
+    override def statusEffect(): Race = {
+      val character = status match {
+        case burnt: Burnt =>
+          val statusDamage = burnt.applyStatusEffect
+          println(s"The $displayName is burnt. It lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=burnt.copy(turnCount = burnt.turnCount-1))
+        case frozen: Frozen =>
+          val statusDamage = frozen.applyStatusEffect
+          println(s"The $displayName is frozen. It lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=frozen.copy(turnCount = frozen.turnCount-1))
+        case shocked: Shocked =>
+          println(s"The $displayName is shocked. It can't move and misses a go.")
+          this.copy(status=shocked.copy(turnCount = shocked.turnCount-1))
+        case _: Normal =>
+          this.copy()
+      }
+
+      if (character.status.turnCount == 0)
+        character.copy(status = Normal())
+      else
+        character
+    }
   }
 
-  case class Orc (hitPoints: Int = rollDice(1,10), amourClass: Int = 12, weapon: Weapon = Sword()) extends Race{
+  case class Orc (hitPoints: Int = rollDice(1,10), amourClass: Int = 12, weapon: Weapon = Sword(), status: Status = Normal()) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
     def displayName: String = "Orc"
+
+    override def statusEffect(): Race = {
+      val character = status match {
+        case burnt: Burnt =>
+          val statusDamage = burnt.applyStatusEffect
+          println(s"The $displayName is burnt. It lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=burnt.copy(turnCount = burnt.turnCount-1))
+        case frozen: Frozen =>
+          val statusDamage = frozen.applyStatusEffect
+          println(s"The $displayName is frozen. It lost $statusDamage health.")
+          this.copy(hitPoints= hitPoints-statusDamage, status=frozen.copy(turnCount = frozen.turnCount-1))
+        case shocked: Shocked =>
+          println(s"The $displayName is shocked. It can't move and misses a go.")
+          this.copy(status=shocked.copy(turnCount = shocked.turnCount-1))
+        case _: Normal =>
+          this.copy()
+      }
+
+      if (character.status.turnCount == 0)
+        character.copy(status = Normal())
+      else
+        character
+    }
 
   }
 
