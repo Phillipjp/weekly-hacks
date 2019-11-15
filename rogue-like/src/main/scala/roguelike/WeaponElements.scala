@@ -13,31 +13,22 @@ object WeaponElements {
   }
 
   case class Fire() extends WeaponElement{
-    override def specialAttack: Status = {
-      val prob = Random.nextInt(100)
-      if(prob < 25) Burnt()
-      else Normal()
-    }
+    override def specialAttack: Status =
+      specialAttackStatus(Burnt())
 
     override def displayName: String = " of Fire"
   }
 
   case class Ice() extends WeaponElement{
-    override def specialAttack: Status = {
-      val prob = Random.nextInt(100)
-      if(prob < 25) Frozen()
-      else Normal()
-    }
+    override def specialAttack: Status =
+      specialAttackStatus(Frozen())
 
     override def displayName: String = " of Ice"
   }
 
   case class Thunder() extends WeaponElement{
-    override def specialAttack: Status =  {
-      val prob = Random.nextInt(100)
-      if(prob < 25) Shocked()
-      else Normal()
-    }
+    override def specialAttack: Status =
+      specialAttackStatus(Shocked())
 
     override def displayName: String = " of Thunder"
   }
@@ -46,6 +37,12 @@ object WeaponElements {
     override def specialAttack: Status = Normal()
 
     override def displayName: String = ""
+  }
+
+  private def specialAttackStatus(status: Status): Status = {
+    val prob = Random.nextInt(100)
+    if(prob < 25) status
+    else Normal()
   }
 
   def getWeaponElement: WeaponElement = {

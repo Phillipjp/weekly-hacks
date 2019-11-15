@@ -14,7 +14,7 @@ object Game extends App {
 
   def playGame(): Unit = {
     val player = Human()
-    println(s"You entered the dungeon wielding a ${player.weapon.displayName}")
+    println(s"You entered the dungeon as a ${player.displayName} wielding a ${player.weapon.displayName}")
     turn(player, getOpponent)
 
   }
@@ -69,7 +69,7 @@ object Game extends App {
   }
 
   private def healPlayer(player: Human): Human = {
-    println(s"You have ${player.hitPoints} hit points remaining and ${player.healingPotions} healing potions. Do you wish to heal? (y/n)")
+    println(s"You have ${player.hitPoints}/${Races.humanHitPoints} hit points remaining and ${player.healingPotions} healing potions. Do you wish to heal? (y/n)")
     val heal = scala.io.StdIn.readLine().toLowerCase
     heal match {
       case "y" => player.heal()
@@ -80,7 +80,8 @@ object Game extends App {
   private def attack(attacker: Race, defender: Race): Race = {
     val armourRoll = rollDice(1, 20)
     val canAttack = armourRoll + attacker.weapon.toHit > defender.amourClass
-    val attackDamage = attacker.attack()
+    val affinityAttackMultiplier = defender.elementalAffinity.elementalAffinityDamageMultiplier(attacker.weapon.element)
+    val attackDamage = attacker.attack() * affinityAttackMultiplier
     defender match {
       case goblin: Goblin if canAttack =>
         println(s"You dealt $attackDamage damage to the ${defender.displayName}")

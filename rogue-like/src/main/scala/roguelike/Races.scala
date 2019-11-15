@@ -2,15 +2,18 @@ package roguelike
 
 import roguelike.Weapons._
 import roguelike.Dice.rollDice
+import roguelike.ElementalAffinities._
 import roguelike.Statuses._
+
 
 object Races{
 
   sealed trait Race extends Displayable{
-    val hitPoints: Int
+    val hitPoints: Double
     val amourClass: Int
     val weapon: Weapon
     val status: Status
+    val elementalAffinity: ElementalAffinity
 
     def attack() : Int
 
@@ -28,13 +31,13 @@ object Races{
     def loot(enemy: Race): Race
   }
 
-  private val humanHitPoints = 16
+  val humanHitPoints: Double = 16
 
-  case class Human(hitPoints: Int = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1, status: Status = Normal()) extends Race with Healer with Looter {
+  case class Human(hitPoints: Double = humanHitPoints, amourClass: Int = 13, weapon: Weapon = Axe(), gold: Int = 0, healingPotions: Int = 1, status: Status = Normal(), elementalAffinity: ElementalAffinity = getElementalAffinity) extends Race with Healer with Looter {
 
     def attack(): Int = weapon.dealDamage()
 
-    def displayName: String = "Human"
+    def displayName: String = elementalAffinity.displayName + "Human"
 
     def heal(): Human = {
       if(healingPotions > 0) {
@@ -94,11 +97,11 @@ object Races{
     }
   }
 
-  case class Goblin(hitPoints: Int = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar(), status: Status = Normal()) extends Race{
+  case class Goblin(hitPoints: Double = rollDice(1,4), amourClass: Int = 10, weapon: Weapon = Scimitar(), status: Status = Normal(), elementalAffinity: ElementalAffinity = getElementalAffinity) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
-    def displayName: String = "Goblin"
+    def displayName: String = elementalAffinity.displayName + "Goblin"
 
     override def statusEffect(): Race = {
       val character = status match {
@@ -124,11 +127,11 @@ object Races{
     }
   }
 
-  case class HobGoblin(hitPoints: Int = rollDice(1,6), amourClass: Int = 10, weapon: Weapon = ShortSword(), status: Status = Normal()) extends Race{
+  case class HobGoblin(hitPoints: Double = rollDice(1,6), amourClass: Int = 10, weapon: Weapon = ShortSword(), status: Status = Normal(), elementalAffinity: ElementalAffinity = getElementalAffinity) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
-    def displayName: String = "Hob Goblin"
+    def displayName: String = elementalAffinity.displayName + "Hob Goblin"
 
     override def statusEffect(): Race = {
       val character = status match {
@@ -154,11 +157,11 @@ object Races{
     }
   }
 
-  case class Orc (hitPoints: Int = rollDice(1,10), amourClass: Int = 12, weapon: Weapon = Sword(), status: Status = Normal()) extends Race{
+  case class Orc (hitPoints: Double = rollDice(1,10), amourClass: Int = 12, weapon: Weapon = Sword(), status: Status = Normal(), elementalAffinity: ElementalAffinity = getElementalAffinity) extends Race{
 
     def attack(): Int = weapon.dealDamage()
 
-    def displayName: String = "Orc"
+    def displayName: String = elementalAffinity.displayName + "Orc"
 
     override def statusEffect(): Race = {
       val character = status match {
