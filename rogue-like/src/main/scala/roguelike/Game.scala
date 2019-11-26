@@ -2,7 +2,7 @@ package roguelike
 
 import roguelike.Races._
 import roguelike.Dice._
-import roguelike.Statuses.{Burnt, Frozen, Shocked}
+import roguelike.Statuses.{Burnt, DamageStatus, Frozen, Shocked}
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -47,8 +47,7 @@ object Game extends App {
       case _ =>
         val attackedOpponent = attack(attacker, defender)
         val statusOpponent = attackedOpponent.status match {
-          case _: Burnt => attackedOpponent.statusEffect()
-          case _: Frozen => attackedOpponent.statusEffect()
+          case _: DamageStatus => attackedOpponent.statusEffect()
           case _ => attackedOpponent
         }
         (attacker, statusOpponent)
