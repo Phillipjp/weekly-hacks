@@ -1,6 +1,6 @@
 package cryptanalysis
 
-class CaesarCypher(shift: Int) {
+class CaesarCypherEncrypter(shift: Int) {
 
  private val caesarMapping = getCaesarMapping()
 
