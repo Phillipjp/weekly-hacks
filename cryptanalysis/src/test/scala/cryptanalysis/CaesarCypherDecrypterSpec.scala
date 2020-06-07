@@ -9,10 +9,7 @@ class CaesarCypherDecrypterSpec extends AnyFlatSpecLike with Matchers{
     // Given
     val sampleText = "DDDD CCC AA BB"
     val decrypter = new CaesarCypherDecrypter(sampleText)
-    val expected = Seq(
-      'D', 'C',  'A',  'B',  'E',  'F',  'G',  'H',  'I',
-      'J', 'K',  'L',  'M',  'N',  'O',  'P',  'Q',  'R',
-      'S', 'T',  'U',  'V',  'W',  'X',  'Y',  'Z')
+    val expected = Seq('D', 'C',  'A',  'B')
 
     // When
     val actual = decrypter.getLetterFrequencies(sampleText)
@@ -58,5 +55,20 @@ class CaesarCypherDecrypterSpec extends AnyFlatSpecLike with Matchers{
     // Then
     actual shouldBe expected
   }
+
+  it should "mark an unknown decrypted char as '?'" in {
+    // Given
+    val cypher = new CaesarCypherEncrypter(2)
+    val cypherText = cypher.encrypt("hello there")
+    val decrypter = new CaesarCypherDecrypter("heelelho")
+    val expected = "HELLO ?HE?E"
+
+    // When
+    val actual = decrypter.decryptCypherText(cypherText)
+
+    // Then
+    actual shouldBe expected
+  }
+
 
 }

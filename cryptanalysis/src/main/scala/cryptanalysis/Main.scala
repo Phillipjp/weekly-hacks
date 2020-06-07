@@ -1,8 +1,5 @@
 package cryptanalysis
 
-import scala.io.{BufferedSource, Source}
-import scala.util.Random
-
 object Main {
 
   def main(args: Array[String]): Unit = {
@@ -17,6 +14,7 @@ object Main {
     val result = decrypter.decryptCypherText(cypherText)
 
     println(plainText.toUpperCase)
+    println(cypherText)
     println(result)
 
   }
