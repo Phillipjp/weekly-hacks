@@ -3,6 +3,8 @@ package cryptanalysis
 class CaesarCypherDecrypter(sampleText: String) {
 
   private val letterFrequencies = getLetterFrequencies(sampleText)
+  private val bigramFrequencies = getNgramFrequencies(sampleText, 2)
+  private val triramFrequencies = getNgramFrequencies(sampleText, 3)
 
   private[cryptanalysis] def getLetterFrequencies(text: String): Seq[Char] = {
     val normalizedText = Utils.normalizeString(text).replaceAll(" ", "")
@@ -26,18 +28,38 @@ class CaesarCypherDecrypter(sampleText: String) {
 
     val frequencies: Seq[(Char, Int)] = getFrequencies(normalizedText, initialFrequencies).toSeq
     val sortedRankedFrequencies = frequencies.sortWith(sortByCharacterFrequency)
-//    val sortedRankedFrequencies = frequencies.sortBy(-_._2)
-      sortedRankedFrequencies.map(_._1)
-//    rankedFrequencies
-
+    sortedRankedFrequencies.map(_._1)
   }
 
   private def sortByCharacterFrequency(a: (Char, Int), b: (Char, Int)): Boolean = {
-    if(a._2 == b._2)
+    if (a._2 == b._2)
       a._1 < b._1
     else
       a._2 > b._2
 
+  }
+
+  private[cryptanalysis] def getNgramFrequencies(text: String, n: Int): List[String] = {
+    val normalizedText = Utils.normalizeString(text)
+    val bigrams = normalizedText
+      .split(" ")
+      .flatMap(word => word.sliding(n, 1))
+      .groupBy(gram => gram)
+      .toList
+      .map(gram => (gram._1, gram._2.length))
+      .sortBy(-_._2)
+      .map(_._1)
+
+    bigrams
+
+  }
+
+  def decryptCypherText(cypherText: String): String = {
+    val normalizedCypherText = Utils.normalizeString(cypherText)
+    val cypherCharactersOrderedByFreequncy = getLetterFrequencies(normalizedCypherText.replaceAll(" ", ""))
+    val characterMappings = cypherCharactersOrderedByFreequncy.zip(letterFrequencies).toMap + (' ' -> ' ')
+
+    cypherText.map(char => characterMappings(char))
   }
 
 }
