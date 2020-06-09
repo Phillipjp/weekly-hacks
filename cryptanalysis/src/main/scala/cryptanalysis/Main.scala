@@ -11,9 +11,11 @@ object Main {
     println(s"PLAIN TEXT:  ${plainText.toUpperCase}")
     println(s"CIPHER TEXT: $cypherText")
 
-    println("========================================================")
-    val top5 = CaesarCipherDecrypter.decrypt(cypherText)
-    top5.zipWithIndex.foreach(x => println(s"DECIPHER ${x._2+1}: ${x._1}"))
+    println("============================================================")
+    val top5 = CaesarCipherDecrypter.breakCipher(cypherText)
+    top5.zipWithIndex.foreach(x => println(s"BREAK ATTEMPT ${x._2+1}: ${x._1}"))
+    println("============================================================")
+    println(s"DECRYPT: ${CaesarCipherDecrypter.decrypt(cypherText, 2)}")
 
   }
 }

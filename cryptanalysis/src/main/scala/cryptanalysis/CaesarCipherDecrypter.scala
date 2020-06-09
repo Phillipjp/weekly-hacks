@@ -27,7 +27,7 @@ object CaesarCipherDecrypter {
     }
   }
 
-  def decrypt(cypherText: String): Seq[String] = {
+  def breakCipher(cypherText: String): Seq[String] = {
     val normalizedCypherText = Utils.normalizeStringWithoutSpaces(cypherText)
     val expectedLetterFrequencies: _root_.scala.Array[Double] = calculateExpectedLetterFrequencies(normalizedCypherText)
 
@@ -57,5 +57,9 @@ object CaesarCipherDecrypter {
   private [cryptanalysis] def calculateExpectedLetterFrequencies(normalizedCypherText: String): Array[Double] = {
     val textLength = normalizedCypherText.length
     letterProbabilities.map(x => x * textLength).toArray
+  }
+
+  def decrypt(cypherText: String, shift: Int): String = {
+    new CaesarCipherEncrypter(26 - shift).encrypt(cypherText)
   }
 }
