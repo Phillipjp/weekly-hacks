@@ -6,4 +6,8 @@ object Utils {
     s.replaceAll("""[\p{Punct}]|£|\n""", "").filterNot(_.isDigit).toUpperCase
   }
 
+  def normalizeStringWithoutSpaces(s: String): String = {
+    s.replaceAll("""[\p{Punct}]|£|\n""", "").filterNot(_.isDigit).replaceAll(" ", "").toUpperCase
+  }
+
 }
