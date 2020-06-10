@@ -1,5 +1,4 @@
-package cryptanalysis
-
+package cryptanalysis.caesar
 
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers

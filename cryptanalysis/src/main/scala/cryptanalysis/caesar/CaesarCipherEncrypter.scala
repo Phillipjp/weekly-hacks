@@ -1,10 +1,12 @@
-package cryptanalysis
+package cryptanalysis.caesar
+
+import cryptanalysis.Utils
 
 class CaesarCipherEncrypter(shift: Int) {
 
  private val caesarMapping = getCaesarMapping()
 
-   private [cryptanalysis] def getCaesarMapping(): Map[Char, Char] = {
+   private [caesar] def getCaesarMapping(): Map[Char, Char] = {
 
      val standardisedShift = if(shift < 0){
        26 + shift
@@ -23,6 +25,7 @@ class CaesarCipherEncrypter(shift: Int) {
      alphabet.zip(encoded).toMap + (' ' -> ' ')
 
   }
+
   def encrypt(plainText: String): String = {
     val normalizedPlainText = Utils.normalizeString(plainText)
     val encryptredText = normalizedPlainText.map(letter => caesarMapping(letter))
