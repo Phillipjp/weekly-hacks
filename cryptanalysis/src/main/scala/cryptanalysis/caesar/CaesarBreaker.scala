@@ -1,39 +1,33 @@
 package cryptanalysis.caesar
 
-import cryptanalysis.Utils
+import cryptanalysis.Breaker
+import cryptanalysis.language.Language
 
 import scala.annotation.tailrec
 
-object CaesarCipherDecrypter {
+object CaesarBreaker extends Breaker[Int]{
 
   // Sourced from: http://pi.math.cornell.edu/~mec/2003-2004/cryptography/subs/frequencies.html
   private val letterProbabilities = Seq(8.12, 1.49, 2.71, 4.32, 12.02, 2.3, 2.03, 5.92, 7.31, 0.1, 0.69, 3.98, 2.61,
     6.95, 7.68, 1.82, 0.11, 6.02, 6.28, 9.1, 2.88, 1.11, 2.09, 0.17, 2.11, 0.07)
 
-  def decrypt(cypherText: String, shift: Int): String = {
-    new CaesarCipherEncrypter(26 - shift).encrypt(cypherText)
-  }
 
-  def breakCipher(cipherText: String): Seq[String] = {
-    val normalizedCipherText = Utils.normalizeStringWithoutSpaces(cipherText)
+  override def break(cipherText: String, language: Language): Seq[(Int, String)] = {
+    val normalizedCipherText = language.normalizeStringWithoutSpaces(cipherText)
     val expectedLetterFrequencies = calculateExpectedLetterFrequencies(normalizedCipherText)
 
-    val initialFrequencies = Map(
-      'A' -> 1, 'B' -> 1, 'C' -> 1, 'D' -> 1, 'E' -> 1, 'F' -> 1, 'G' -> 1, 'H' -> 1, 'I' -> 1,
-      'J' -> 1, 'K' -> 1, 'L' -> 1, 'M' -> 1, 'N' -> 1, 'O' -> 1, 'P' -> 1, 'Q' -> 1, 'R' -> 1,
-      'S' -> 1, 'T' -> 1, 'U' -> 1, 'V' -> 1, 'W' -> 1, 'X' -> 1, 'Y' -> 1, 'Z' -> 1
-    )
+    val initialFrequencies = language.alphabet.map(letter => (letter, 1)).toMap
 
-    val shiftChiSquareScores = (0 to 25).map(shift => getChiSquaredScoreForShift(cipherText, expectedLetterFrequencies, initialFrequencies, shift))
+    val shiftChiSquareScores = (0 to 25).map(shift => getChiSquaredScoreForShift(cipherText, expectedLetterFrequencies, initialFrequencies, shift, language))
 
     val closestShifts = shiftChiSquareScores.zipWithIndex.sortBy(_._1).take(5).map(_._2)
 
-    closestShifts.map{shift => new CaesarCipherEncrypter(shift).encrypt(cipherText)}
+    closestShifts.map{shift => (26 - shift, CaesarCipher.encrypt(cipherText, shift, language))}
   }
 
-  private def getChiSquaredScoreForShift(cipherText: String, expectedLetterFrequencies: Seq[Double], initialFrequencies: Map[Char, Int], shift: Int): Double = {
-    val decipheredText = new CaesarCipherEncrypter(shift).encrypt(cipherText)
-    val decipheredTextLetterFrequency = getFrequencies(Utils.normalizeStringWithoutSpaces(decipheredText), initialFrequencies)
+  private def getChiSquaredScoreForShift(cipherText: String, expectedLetterFrequencies: Seq[Double], initialFrequencies: Map[Char, Int], shift: Int, language: Language): Double = {
+    val decipheredText = CaesarCipher.encrypt(cipherText, shift, language)
+    val decipheredTextLetterFrequency = getFrequencies(language.normalizeStringWithoutSpaces(decipheredText), initialFrequencies)
       .toSeq
       .sortBy { case (letter, _) => letter }
       .map { case (_, frequency) => frequency }

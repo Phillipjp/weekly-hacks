@@ -2,22 +2,10 @@ package cryptanalysis.caesar
 
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
+import cryptanalysis.language.English
 
-class CaesarCipherDecrypterSpec extends AnyFlatSpecLike with Matchers{
+class CaesarBreakerSpec extends AnyFlatSpecLike with Matchers{
 
-
-  it should "correctly decrypt the cipher when the shift is known" in {
-    // Given
-    val shift = 2
-    val plainText = "hello there"
-    val cipherText = new CaesarCipherEncrypter(shift).encrypt(plainText)
-
-    // When
-    val actual = CaesarCipherDecrypter.decrypt(cipherText, shift)
-
-    // Then
-    actual shouldBe plainText.toUpperCase
-  }
 
   it should "calculate the frequency of each character in a string" in {
     // Given
@@ -26,7 +14,7 @@ class CaesarCipherDecrypterSpec extends AnyFlatSpecLike with Matchers{
     val expected = Map('A' -> 3, 'B' -> 2)
 
     // When
-    val actual = CaesarCipherDecrypter.getFrequencies(sampleText, initalFrequecies)
+    val actual = CaesarBreaker.getFrequencies(sampleText, initalFrequecies)
 
     // Then
     actual shouldBe expected
@@ -40,7 +28,7 @@ class CaesarCipherDecrypterSpec extends AnyFlatSpecLike with Matchers{
     val expected = 0.9614086430592136
 
     // When
-    val actual = CaesarCipherDecrypter.chiSquare(observedFrequencies, expectedFrequencies)
+    val actual = CaesarBreaker.chiSquare(observedFrequencies, expectedFrequencies)
 
     // Then
     actual shouldBe expected
@@ -55,7 +43,7 @@ class CaesarCipherDecrypterSpec extends AnyFlatSpecLike with Matchers{
 
     // When
     val actual = intercept[Exception] {
-      CaesarCipherDecrypter.chiSquare(observedFrequencies, expectedFrequencies)
+      CaesarBreaker.chiSquare(observedFrequencies, expectedFrequencies)
     }
 
     // Then
@@ -64,12 +52,11 @@ class CaesarCipherDecrypterSpec extends AnyFlatSpecLike with Matchers{
 
   it should "return 5 different attempts at breaking the cipher" in {
     // Given
-    val cipher = new CaesarCipherEncrypter(2)
     val plainText = "the quick brown fox jumps over the lazy dog"
-    val cipherText = cipher.encrypt(plainText)
+    val cipherText = CaesarCipher.encrypt(plainText, 2, English)
 
     // When
-    val actual = CaesarCipherDecrypter.breakCipher(cipherText)
+    val actual = CaesarBreaker.break(cipherText, English)
 
     // Then
     actual.size shouldBe 5
