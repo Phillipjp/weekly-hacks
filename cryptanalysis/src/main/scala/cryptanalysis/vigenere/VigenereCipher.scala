@@ -33,7 +33,7 @@ object VigenereCipher extends Cipher[String]{
   }
 
   private [vigenere] def makeVigenereDecrypterTable(language: Language): Map[Char, Map[Char, Char]] = {
-    language.alphabet.zip((0 to 25).map(shift => CaesarCipher.encrypt(language.alphabet, shift, language).zip(language.alphabet).toMap)).toMap
+    language.alphabet.zip((0 until language.alphabet.size).map(shift => CaesarCipher.encrypt(language.alphabet, shift, language).zip(language.alphabet).toMap)).toMap
   }
 
   private [vigenere] def makeKey(normalizedWithoutSpacesPlainText: String, keyString: String): String = {

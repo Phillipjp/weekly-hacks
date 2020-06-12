@@ -18,11 +18,11 @@ object CaesarBreaker extends Breaker[Int]{
 
     val initialFrequencies = language.alphabet.map(letter => (letter, 1)).toMap
 
-    val shiftChiSquareScores = (0 to 25).map(shift => getChiSquaredScoreForShift(cipherText, expectedLetterFrequencies, initialFrequencies, shift, language))
+    val shiftChiSquareScores = (0 until language.alphabet.size).map(shift => getChiSquaredScoreForShift(cipherText, expectedLetterFrequencies, initialFrequencies, shift, language))
 
     val closestShifts = shiftChiSquareScores.zipWithIndex.sortBy(_._1).take(5).map(_._2)
 
-    closestShifts.map{shift => (26 - shift, CaesarCipher.encrypt(cipherText, shift, language))}
+    closestShifts.map{shift => (language.alphabet.size - shift, CaesarCipher.encrypt(cipherText, shift, language))}
   }
 
   private def getChiSquaredScoreForShift(cipherText: String, expectedLetterFrequencies: Seq[Double], initialFrequencies: Map[Char, Int], shift: Int, language: Language): Double = {
