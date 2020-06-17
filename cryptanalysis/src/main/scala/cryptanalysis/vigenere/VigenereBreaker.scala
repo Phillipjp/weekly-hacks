@@ -5,35 +5,37 @@ import cryptanalysis.caesar.CaesarBreaker
 import cryptanalysis.language.Language
 
 import scala.annotation.tailrec
-import scala.collection.immutable
 
 object VigenereBreaker extends Breaker[String] {
 
   override def break(cipherText: String, language: Language): Seq[(String, String)] = {
 
     val normalizedCipherText = language.normalizeString(cipherText)
-    val possibleRepetitions = getAllPossibleConsecutiveSubstrings(normalizedCipherText)
+    val normalizedCipherTextWithoutSpaces = language.normalizeStringWithoutSpaces(cipherText)
+    val possibleRepetitions = getAllPossibleConsecutiveSubstrings(normalizedCipherTextWithoutSpaces)
 
-    val keyDistances = possibleRepetitions
-      .map(possibleKey => getDistanceBetweenSubstrings(cipherText, possibleKey))
-      .filter(_ > 1)
-      .flatMap(factorize(_))
+    val distanceBetweenSubstrings= possibleRepetitions
+      .map(possibleKey => getDistanceBetweenSubstrings(normalizedCipherTextWithoutSpaces, possibleKey))
+      .filter(x => x > 1)
 
-    val mode = getMode(keyDistances)
+    val keyDistances = distanceBetweenSubstrings.flatMap(factorize(_))
 
-    val keyCharacters = (1 to mode).mkString * cipherText.length
-    val keyLengthColumns: Seq[(Char, Char)] = keyCharacters.zip(cipherText)
+    val modes: Iterable[Int] = getModes(keyDistances)
+    val decipherAttempts = for {
+      mode <- modes
+      keyCharacters = (1 to mode).mkString * cipherText.length
+      keyLengthColumns: Seq[(Char, Char)] = keyCharacters.zip(normalizedCipherText)
 
-    val keyLengthStrings = getKeyLengthStrings(mode, keyLengthColumns)
+      keyLengthStrings = getKeyLengthStrings(mode, keyLengthColumns)
 
-    val brokenKeyLengthStrings = keyLengthStrings.map(str => CaesarBreaker.break(str, language)).transpose
+      brokenKeyLengthStrings = keyLengthStrings.map(str => CaesarBreaker.break(str, language)).transpose
 
-    val combinedBrokenKeyLengthStrings = zipBrokenKeyLengthStrings(brokenKeyLengthStrings)
+      combinedBrokenKeyLengthStrings = zipBrokenKeyLengthStrings(brokenKeyLengthStrings)
 
-    val keys = breakKeys(brokenKeyLengthStrings, language)
+      keys = breakKeys(brokenKeyLengthStrings, language)
+    } yield keys.zip(combinedBrokenKeyLengthStrings)
 
-    keys.zip(combinedBrokenKeyLengthStrings)
-
+    decipherAttempts.flatten.toSeq
   }
 
   private def zipBrokenKeyLengthStrings(brokenKeyLengthStrings: List[List[(Int, String)]]) = {
@@ -65,8 +67,7 @@ object VigenereBreaker extends Breaker[String] {
   }
 
   private[vigenere] def getAllPossibleConsecutiveSubstrings(cipherText: String): Seq[String] = {
-    val cipherTextWithoutSpaces = cipherText.replaceAll(" ", "")
-    (3 to cipherTextWithoutSpaces.length).flatMap(i => cipherTextWithoutSpaces.sliding(i, 1)).distinct
+    (3 to cipherText.length).flatMap(i => cipherText.sliding(i, 1)).distinct
   }
 
   private[vigenere] def getDistanceBetweenSubstrings(string: String, subString: String): Int = {
@@ -77,7 +78,11 @@ object VigenereBreaker extends Breaker[String] {
     else {
       val stringWithoutFirstOccurrenceOfSubstring = string.substring(index1 + subString.length)
       val index2 = stringWithoutFirstOccurrenceOfSubstring.indexOfSlice(subString)
-      subString.length + index2
+      if (index2 < 0)
+        -1
+      else {
+        subString.length + index2
+      }
     }
   }
 

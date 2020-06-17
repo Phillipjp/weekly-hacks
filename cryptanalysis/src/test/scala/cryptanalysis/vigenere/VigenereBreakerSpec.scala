@@ -30,7 +30,7 @@ class VigenereBreakerSpec extends AnyFlatSpecLike with Matchers{
   }
 
 
-  it should "get the lengths of the 2 most common substrings in the cipher text" in {
+  it should "get the distance between a given substring in a string" in {
     // Given
 
     val string = "PORWJSXFGXTHJAQWNFGXQ"
@@ -41,6 +41,19 @@ class VigenereBreakerSpec extends AnyFlatSpecLike with Matchers{
 
     // Then
     actual shouldBe 10
+  }
+
+  it should "return -1 when substring is not in string" in {
+    // Given
+
+    val string = "PORWJSXFGXTHJAQWNFGXQ"
+    val substring = "ABC"
+
+    // When
+    val actual = VigenereBreaker.getDistanceBetweenSubstrings(string, substring)
+
+    // Then
+    actual shouldBe -1
   }
 
   it should "get all factors of a number" in {
@@ -71,12 +84,6 @@ class VigenereBreakerSpec extends AnyFlatSpecLike with Matchers{
 
     // Then
     actual shouldBe 2
-  }
-
-
-  it should "take nth" in {
-    val x = Seq("1","2","3","4","5","6","7","8","9").mkString
-    println(x)
   }
 
   it should "zip 3 strings together" in {
