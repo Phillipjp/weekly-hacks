@@ -13,13 +13,13 @@ object CaesarCipher extends Cipher[Int]{
   }
 
   override def decrypt(cypherText: String, shift: Int, language: Language): String = {
-    encrypt(cypherText, language.alphabet.size - shift, language)
+    encrypt(cypherText, language.alphabet.length - shift, language)
   }
 
   private[caesar] def getCaesarMapping(shift: Int, alphabet: String): Map[Char, Char] = {
 
     val standardisedShift = if (shift < 0) {
-      alphabet.size + shift
+      alphabet.length + shift
     }
     else {
       shift
