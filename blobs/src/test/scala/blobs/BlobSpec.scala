@@ -5,10 +5,6 @@ import org.scalatest.matchers.should.Matchers
 
 class BlobSpec extends AnyFlatSpecLike with Matchers {
 
-  it should "add two blob together" in {
-    Blob(1,1,1).add(Blob(1,1,2)) shouldBe Blob(1,1,3)
-  }
-
   behavior of "distanceGrid"
 
   it should "create a distance grid where the value of each cell is the distance from the blob" in {

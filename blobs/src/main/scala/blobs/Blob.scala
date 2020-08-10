@@ -1,11 +1,7 @@
 package blobs
-import scala.math.{abs, atan2, pow, sqrt}
+import scala.math.{abs, atan2}
 
 case class Blob(x: Int, y: Int, size: Int){
-
-  def add(that: Blob): Blob = {
-    this.copy(size = this.size + that.size)
-  }
 
   def moveNorth: Blob = {
     this.copy(y = this.y + 1)

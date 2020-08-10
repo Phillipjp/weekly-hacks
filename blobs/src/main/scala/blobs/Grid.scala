@@ -16,10 +16,10 @@ object Grid {
       (xReset, current._2 + 1)
   }
 
-  def makeBlobGrid(emptyGrid: List[(Int, Int)], blobs: Seq[Blob]): Map[(Int, Int), Seq[Blob]] = {
+  def makeBlobGrid(coords: Seq[(Int, Int)], blobs: Seq[Blob]): Map[(Int, Int), Seq[Blob]] = {
     val groupedBlobs: Map[(Int, Int), Seq[Blob]] = blobs.groupBy(blob => (blob.x, blob.y))
 
-    emptyGrid.map{coord =>
+    coords.map{ coord =>
       coord -> groupedBlobs.getOrElse(coord, Seq())
     }.toMap
   }
@@ -45,6 +45,7 @@ object Grid {
       }
       println()
     }
+    println()
 
 
 
