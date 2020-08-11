@@ -73,7 +73,19 @@ class GameSpec extends AnyFlatSpecLike with Matchers{
 
     // Then
     actual should contain theSameElementsAs  Seq(Blob(4,4,3), Blob(2,1,3), Blob(1,1,4), Blob(3,2,2))
+  }
 
+  behavior of "playBlobs"
+
+  it should "it should play a complete  game of blobs" in {
+    // Given
+    val blobs = Seq(Blob(4,4,1), Blob(4,3,2), Blob(1,1,3), Blob(1,2,4), Blob(2,1,2))
+
+    // When
+    val actual = Game.playBlobs(blobs)
+
+    // Then
+    actual shouldBe Blob(3,2,12)
   }
 
 }
