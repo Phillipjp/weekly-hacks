@@ -36,7 +36,7 @@ object Game {
 
   private[blobs] def moveBlobs(blobs: Seq[Blob2D], movableBlobs: Seq[Blob2D]): Seq[Blob2D] = {
     movableBlobs.map { blob =>
-      val validBlobs = blobs.filter(_ != blob).filter(_.size <= blob.size)
+      val validBlobs = blobs.filter(b => b != blob && b.size <= blob.size)
       val closestBlob = blob.findClosestBlob(validBlobs)
       blob.moveTowardsBlob(closestBlob)
     }
