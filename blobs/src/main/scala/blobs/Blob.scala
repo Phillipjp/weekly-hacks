@@ -1,6 +1,6 @@
 package blobs
 
-trait Blob[B <: Blob[B, C], C <: Coords] {
+trait Blob[B <: Blob[B, C], C <: Coord] {
   val coord: C
   val size: Int
 

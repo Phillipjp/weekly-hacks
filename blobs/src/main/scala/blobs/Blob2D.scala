@@ -1,7 +1,7 @@
 package blobs
 import scala.math.{abs, atan2}
 
-case class Blob2D(coord: Coords2D, size: Int) extends Blob[Blob2D , Coords2D] {
+case class Blob2D(coord: Coord2D, size: Int) extends Blob[Blob2D , Coord2D] {
 
   private def moveNorth: Blob2D = {
     this.copy(coord = this.coord.copy(y = this.coord.y + 1))

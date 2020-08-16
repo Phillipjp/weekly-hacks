@@ -1,6 +1,6 @@
 package blobs
 import scala.math.{abs, atan2}
-case class Blob3D(coord: Coords3D, size: Int) extends Blob[Blob3D, Coords3D] {
+case class Blob3D(coord: Coord3D, size: Int) extends Blob[Blob3D, Coord3D] {
 
   override def findClosestBlob(blobs: Seq[Blob3D]): Blob3D = {
     val size = blobs.flatMap{blob =>
@@ -85,5 +85,5 @@ case class Blob3D(coord: Coords3D, size: Int) extends Blob[Blob3D, Coords3D] {
     }
   }
 
-  private def as2DBlob(blob: Blob3D): Blob2D = Blob2D(Coords2D(blob.coord.x, blob.coord.y), blob.size)
+  private def as2DBlob(blob: Blob3D): Blob2D = Blob2D(Coord2D(blob.coord.x, blob.coord.y), blob.size)
 }
