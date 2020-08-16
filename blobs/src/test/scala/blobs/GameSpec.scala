@@ -10,26 +10,26 @@ class GameSpec extends AnyFlatSpecLike with Matchers{
   it should "remove the smallest blobs" in{
 
     // Given
-    val blobs = Seq(Blob2D(Coords2D(0,2),1), Blob2D(Coords2D(2,1),2), Blob2D(Coords2D(3,2),5), Blob2D(Coords2D(1,2),1))
+    val blobs = Seq(Blob2D(Coord2D(0,2),1), Blob2D(Coord2D(2,1),2), Blob2D(Coord2D(3,2),5), Blob2D(Coord2D(1,2),1))
 
     // When
-    val actual = Game.removeSmallestBlobs(blobs)
+    val actual = new Game(Seq(Coord2D(0,0)), blobs).removeSmallestBlobs(blobs)
 
     // Then
-    actual shouldBe Seq(Blob2D(Coords2D(2,1),2), Blob2D(Coords2D(3,2),5))
+    actual shouldBe Seq(Blob2D(Coord2D(2,1),2), Blob2D(Coord2D(3,2),5))
   }
 
   behavior of "getSmallestBlobs"
 
   it should "get the smallest blobs" in {
     // Given
-    val blobs = Seq(Blob2D(Coords2D(0,2),1), Blob2D(Coords2D(2,1),2), Blob2D(Coords2D(3,2),5), Blob2D(Coords2D(1,2),1))
+    val blobs = Seq(Blob2D(Coord2D(0,2),1), Blob2D(Coord2D(2,1),2), Blob2D(Coord2D(3,2),5), Blob2D(Coord2D(1,2),1))
 
     // When
-    val actual = Game.getSmallestBlobs(blobs)
+    val actual = new Game(Seq(Coord2D(0,0)), blobs).getSmallestBlobs(blobs)
 
     // Then
-    actual shouldBe Seq(Blob2D(Coords2D(0,2),1), Blob2D(Coords2D(1,2),1))
+    actual shouldBe Seq(Blob2D(Coord2D(0,2),1), Blob2D(Coord2D(1,2),1))
 
   }
 
@@ -37,14 +37,14 @@ class GameSpec extends AnyFlatSpecLike with Matchers{
 
   it should "it should move blobs to the next closest blob" in {
     // Given
-    val blobs = Seq(Blob2D(Coords2D(4,4),1), Blob2D(Coords2D(4,3),2), Blob2D(Coords2D(1,1),3), Blob2D(Coords2D(1,2),4), Blob2D(Coords2D(2,1),2))
-    val movableBlobs = Seq( Blob2D(Coords2D(4,3),2), Blob2D(Coords2D(1,1),3), Blob2D(Coords2D(1,2),4), Blob2D(Coords2D(2,1),2))
+    val blobs = Seq(Blob2D(Coord2D(4,4),1), Blob2D(Coord2D(4,3),2), Blob2D(Coord2D(1,1),3), Blob2D(Coord2D(1,2),4), Blob2D(Coord2D(2,1),2))
+    val movableBlobs = Seq( Blob2D(Coord2D(4,3),2), Blob2D(Coord2D(1,1),3), Blob2D(Coord2D(1,2),4), Blob2D(Coord2D(2,1),2))
 
     // When
-    val actual = Game.moveBlobs(blobs, movableBlobs)
+    val actual = new Game(Seq(Coord2D(0,0)), blobs).moveBlobs(blobs, movableBlobs)
 
     // Then
-    actual shouldBe Seq(Blob2D(Coords2D(4,4),2), Blob2D(Coords2D(2,1),3), Blob2D(Coords2D(1,1),4), Blob2D(Coords2D(3,2),2))
+    actual shouldBe Seq(Blob2D(Coord2D(4,4),2), Blob2D(Coord2D(2,1),3), Blob2D(Coord2D(1,1),4), Blob2D(Coord2D(3,2),2))
 
   }
 
@@ -52,13 +52,13 @@ class GameSpec extends AnyFlatSpecLike with Matchers{
 
   it should "it should merge blobs that have the same x and y values" in {
     // Given
-    val blobs = Seq(Blob2D(Coords2D(4,4),1), Blob2D(Coords2D(4,4),2), Blob2D(Coords2D(1,1),3))
+    val blobs = Seq(Blob2D(Coord2D(4,4),1), Blob2D(Coord2D(4,4),2), Blob2D(Coord2D(1,1),3))
 
     // When
-    val actual = Game.mergeBlobs(blobs)
+    val actual = new Game(Seq(Coord2D(0,0)), blobs).mergeBlobs(blobs)
 
     // Then
-    actual should contain theSameElementsAs  Seq(Blob2D(Coords2D(4,4),3), Blob2D(Coords2D(1,1),3))
+    actual should contain theSameElementsAs  Seq(Blob2D(Coord2D(4,4),3), Blob2D(Coord2D(1,1),3))
 
   }
 
@@ -66,26 +66,26 @@ class GameSpec extends AnyFlatSpecLike with Matchers{
 
   it should "it should play a complete turn of the game of blobs" in {
     // Given
-    val blobs = Seq(Blob2D(Coords2D(4,4),1), Blob2D(Coords2D(4,3),2), Blob2D(Coords2D(1,1),3), Blob2D(Coords2D(1,2),4), Blob2D(Coords2D(2,1),2))
+    val blobs = Seq(Blob2D(Coord2D(4,4),1), Blob2D(Coord2D(4,3),2), Blob2D(Coord2D(1,1),3), Blob2D(Coord2D(1,2),4), Blob2D(Coord2D(2,1),2))
 
     // When
-    val actual = Game.turn(blobs)
+    val actual = new Game(Seq(Coord2D(0,0)), blobs).turn(blobs)
 
     // Then
-    actual should contain theSameElementsAs  Seq(Blob2D(Coords2D(4,4),3), Blob2D(Coords2D(2,1),3), Blob2D(Coords2D(1,1),4), Blob2D(Coords2D(3,2),2))
+    actual should contain theSameElementsAs  Seq(Blob2D(Coord2D(4,4),3), Blob2D(Coord2D(2,1),3), Blob2D(Coord2D(1,1),4), Blob2D(Coord2D(3,2),2))
   }
 
   behavior of "playBlobs"
 
   it should "it should play a complete  game of blobs" in {
     // Given
-    val blobs = Seq(Blob2D(Coords2D(4,4),1), Blob2D(Coords2D(4,3),2), Blob2D(Coords2D(1,1),3), Blob2D(Coords2D(1,2),4), Blob2D(Coords2D(2,1),2))
-
+    val blobs = Seq(Blob2D(Coord2D(4,4),1), Blob2D(Coord2D(4,3),2), Blob2D(Coord2D(1,1),3), Blob2D(Coord2D(1,2),4), Blob2D(Coord2D(2,1),2))
+    val coords = PlayArea2D.makePlayAreaCoords(Coord2D(0,0), Coord2D(4,4))
     // When
-    val actual = Game.playBlobs(blobs)
+    val actual = new Game(coords, blobs).playBlobs()
 
     // Then
-    actual shouldBe Blob2D(Coords2D(3,2),12)
+    actual shouldBe Blob2D(Coord2D(3,2),12)
   }
 
 }
