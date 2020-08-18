@@ -35,7 +35,7 @@ case class Blob2D(coord: Coord2D, size: Int) extends Blob[Blob2D , Coord2D] {
     this.moveSouth.moveWest
   }
 
-  override def findClosestBlob(blobs: Seq[Blob2D]): Blob2D = {
+  override def findClosestBlob(blobs: Seq[Blob[Blob2D, Coord2D]]): Blob[Blob2D, Coord2D] = {
     val size = blobs.flatMap{blob =>
       val x = abs(this.coord.x - blob.coord.x)
       val y = abs(this.coord.y - blob.coord.y)
@@ -79,13 +79,13 @@ case class Blob2D(coord: Coord2D, size: Int) extends Blob[Blob2D , Coord2D] {
 
   }
 
-  private def breakDistanceTie(blobs: Seq[Blob2D]): Blob2D = {
+  private def breakDistanceTie(blobs: Seq[Blob[Blob2D, Coord2D]]): Blob[Blob2D, Coord2D] = {
     blobs.map { blob =>
       atan2(blob.coord.y - this.coord.y, blob.coord.x - this.coord.x) -> blob
     }.minBy(_._1)._2
   }
 
-  override def moveTowardsBlob(blob: Blob2D): Blob2D = {
+  override def moveTowardsBlob(blob: Blob[Blob2D, Coord2D]): Blob[Blob2D, Coord2D] = {
     if(blob.coord.y > this.coord.y && blob.coord.x == this.coord.x)
       this.moveNorth
     else if(blob.coord.y < this.coord.y && blob.coord.x == this.coord.x)

@@ -2,7 +2,7 @@ package blobs
 import scala.math.{abs, atan2}
 case class Blob3D(coord: Coord3D, size: Int) extends Blob[Blob3D, Coord3D] {
 
-  override def findClosestBlob(blobs: Seq[Blob3D]): Blob3D = {
+  override def findClosestBlob(blobs: Seq[Blob[Blob3D, Coord3D]]): Blob[Blob3D, Coord3D] = {
     val size = blobs.flatMap{blob =>
       val x = abs(this.coord.x - blob.coord.x)
       val y = abs(this.coord.y - blob.coord.y)
@@ -58,13 +58,13 @@ case class Blob3D(coord: Coord3D, size: Int) extends Blob[Blob3D, Coord3D] {
       .map{case(x,y, z) => (x,y,z) -> value}.toMap
   }
 
-  private [blobs] def breakDistanceTie(blobs: Seq[Blob3D]): Blob3D = {
+  private [blobs] def breakDistanceTie(blobs: Seq[Blob[Blob3D, Coord3D]]): Blob[Blob3D, Coord3D] = {
     val this2D = (this.coord.x/this.coord.z, this.coord.y/this.coord.z)
     blobs.map{blob => atan2(blob.coord.y/blob.coord.z - this2D._2,  blob.coord.x/blob.coord.z - this2D._1) -> blob}
       .minBy(_._1)._2
   }
 
-  override def moveTowardsBlob(blob: Blob3D): Blob3D = {
+  override def moveTowardsBlob(blob: Blob[Blob3D, Coord3D]): Blob[Blob3D, Coord3D] = {
     if(blob.coord.z == this.coord.z){
       val blob2D = as2DBlob(this).moveTowardsBlob(as2DBlob(blob))
       this.copy(coord = this.coord.copy(x = blob2D.coord.x, y = blob2D.coord.y))
@@ -85,5 +85,5 @@ case class Blob3D(coord: Coord3D, size: Int) extends Blob[Blob3D, Coord3D] {
     }
   }
 
-  private def as2DBlob(blob: Blob3D): Blob2D = Blob2D(Coord2D(blob.coord.x, blob.coord.y), blob.size)
+  private def as2DBlob(blob: Blob[Blob3D, Coord3D]): Blob2D = Blob2D(Coord2D(blob.coord.x, blob.coord.y), blob.size)
 }

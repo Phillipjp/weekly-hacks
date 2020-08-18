@@ -4,8 +4,8 @@ trait Blob[B <: Blob[B, C], C <: Coord] {
   val coord: C
   val size: Int
 
-  def findClosestBlob(blobs: Seq[B]): B
+  def findClosestBlob(blobs: Seq[Blob[B,C]]): Blob[B, C]
 
-  def moveTowardsBlob(blob: B): B
+  def moveTowardsBlob(blob: Blob[B,C]): Blob[B,C]
 
 }
