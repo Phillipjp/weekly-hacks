@@ -2,12 +2,12 @@ package blobs
 
 import scala.annotation.tailrec
 
-class Game[C <: Coord, B <: Blob[B, C]](coords: Seq[Coord], blobs: Seq[Blob[B,C]]) {
+class Game[C <: Coord, B <: Blob[C]](coords: Seq[Coord], blobs: Seq[Blob[C]]) {
 
-  def playBlobs(): Blob[B,C] = {
+  def playBlobs(): Blob[C] = {
 
     @tailrec
-    def play(blobs: Seq[Blob[B,C]]): Blob[B,C] = {
+    def play(blobs: Seq[Blob[C]]): Blob[C] = {
       (coords.head, blobs.head) match {
         case (_: Coord2D, _: Blob2D) =>
           val playArea = PlayArea2D.makeBlobPlayArea(coords.asInstanceOf[Seq[Coord2D]], blobs.asInstanceOf[Seq[Blob2D]])
@@ -29,20 +29,20 @@ class Game[C <: Coord, B <: Blob[B, C]](coords: Seq[Coord], blobs: Seq[Blob[B,C]
     play(blobs)
   }
 
-  def turn(blobs: Seq[Blob[B,C]]): Seq[Blob[B,C]] = {
+  def turn(blobs: Seq[Blob[C]]): Seq[Blob[C]] = {
     val movableBlobs = removeSmallestBlobs(blobs)
     val smallBlobs = getSmallestBlobs(blobs)
     val movedBlobs = moveBlobs(blobs, movableBlobs)
     mergeBlobs(movedBlobs ++ smallBlobs)
   }
 
-  private[blobs] def removeSmallestBlobs(blobs: Seq[Blob[B,C]]): Seq[Blob[B,C]] =
+  private[blobs] def removeSmallestBlobs(blobs: Seq[Blob[C]]): Seq[Blob[C]] =
     blobs.groupBy(_.size).toSeq.sortBy(_._1).tail.flatMap(_._2)
 
-  private[blobs] def getSmallestBlobs(blobs: Seq[Blob[B,C]]): Seq[Blob[B,C]] =
+  private[blobs] def getSmallestBlobs(blobs: Seq[Blob[C]]): Seq[Blob[C]] =
     blobs.groupBy(_.size).toSeq.minBy(_._1)._2
 
-  private[blobs] def moveBlobs(blobs: Seq[Blob[B,C]], movableBlobs: Seq[Blob[B,C]]): Seq[Blob[B,C]] = {
+  private[blobs] def moveBlobs(blobs: Seq[Blob[C]], movableBlobs: Seq[Blob[C]]): Seq[Blob[C]] = {
     movableBlobs.map { blob =>
       val validBlobs = blobs.filter(b => b != blob && b.size <= blob.size)
       val closestBlob = blob.findClosestBlob(validBlobs)
@@ -50,7 +50,7 @@ class Game[C <: Coord, B <: Blob[B, C]](coords: Seq[Coord], blobs: Seq[Blob[B,C]
     }
   }
 
-  private[blobs] def mergeBlobs(blobs: Seq[Blob[B,C]]): Seq[Blob[B,C]] = {
+  private[blobs] def mergeBlobs(blobs: Seq[Blob[C]]): Seq[Blob[C]] = {
     blobs.groupBy(b => b.coord).map { case (_, clashBlobs) =>
 
       val size = clashBlobs.map(_.size).sum
@@ -58,7 +58,7 @@ class Game[C <: Coord, B <: Blob[B, C]](coords: Seq[Coord], blobs: Seq[Blob[B,C]
         case blob2D: Blob2D => blob2D.copy(size = size)
         case blob3D: Blob3D => blob3D.copy(size = size)
       }
-    }.toSeq.asInstanceOf[Seq[Blob[B,C]]]
+    }.toSeq.asInstanceOf[Seq[Blob[C]]]
   }
 
 }
