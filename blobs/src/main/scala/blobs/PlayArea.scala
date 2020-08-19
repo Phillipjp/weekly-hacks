@@ -1,6 +1,6 @@
 package blobs
 
-trait PlayArea [C <: Coord, B <: Blob[C]]{
+trait PlayArea [C <: Coord, B <: Blob]{
 
   def makePlayAreaCoords(startCoord: C, endCoord: C): Seq[C]
 
