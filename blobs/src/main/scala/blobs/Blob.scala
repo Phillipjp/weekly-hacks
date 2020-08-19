@@ -9,3 +9,4 @@ trait Blob[C <: Coord] {
   def moveTowardsBlob(blob: Blob[C]): Blob[C]
 
 }
+

@@ -2,18 +2,18 @@ package blobs
 
 import scala.annotation.tailrec
 
-class Game[C <: Coord, B <: Blob[C]](coords: Seq[Coord], blobs: Seq[Blob[C]]) {
+class Game[C <: Coord, B <: Blob[C]](coords: CoordWrapper[C], blobs: BlobWrapper[B,C]) {
 
   def playBlobs(): Blob[C] = {
 
     @tailrec
-    def play(blobs: Seq[Blob[C]]): Blob[C] = {
-      (coords.head, blobs.head) match {
-        case (_: Coord2D, _: Blob2D) =>
-          val playArea = PlayArea2D.makeBlobPlayArea(coords.asInstanceOf[Seq[Coord2D]], blobs.asInstanceOf[Seq[Blob2D]])
+    def play(blobs: BlobWrapper[B,C]): Blob[C] = {
+      (coords, blobs) match {
+        case (coords: Coord2DWrapper, blobs: Blob2DWrapper) =>
+          val playArea = PlayArea2D.makeBlobPlayArea(coords.coords, blobs.blobs)
           PlayArea2D.printBlobPlayArea(playArea)
-        case (_: Coord3D, _: Blob3D) =>
-          val playArea = PlayArea3D.makeBlobPlayArea(coords.asInstanceOf[Seq[Coord3D]], blobs.asInstanceOf[Seq[Blob3D]])
+        case (coords: Coord3DWrapper, blobs: Blob3DWrapper) =>
+          val playArea = PlayArea3D.makeBlobPlayArea(coords.coords, blobs.blobs)
           PlayArea3D.printBlobPlayArea(playArea)
       }
 
@@ -29,11 +29,20 @@ class Game[C <: Coord, B <: Blob[C]](coords: Seq[Coord], blobs: Seq[Blob[C]]) {
     play(blobs)
   }
 
-  def turn(blobs: Seq[Blob[C]]): Seq[Blob[C]] = {
-    val movableBlobs = removeSmallestBlobs(blobs)
-    val smallBlobs = getSmallestBlobs(blobs)
-    val movedBlobs = moveBlobs(blobs, movableBlobs)
-    mergeBlobs(movedBlobs ++ smallBlobs)
+  def turn(blobs: BlobWrapper[B,C]): BlobWrapper[B,C] = {
+    blobs match {
+      case blobs: Blob2DWrapper =>
+        val movableBlobs = Blob2DWrapper.removeSmallestBlobs(blobs)
+        val smallBlobs = Blob2DWrapper.getSmallestBlobs(blobs)
+        val movedBlobs = Blob2DWrapper.moveBlobs(blobs, movableBlobs)
+        Blob2DWrapper.mergeBlobs(movedBlobs, smallBlobs).asInstanceOf[BlobWrapper[B,C]]
+      case blobs: Blob3DWrapper =>
+        val movableBlobs = Blob3DWrapper.removeSmallestBlobs(blobs)
+        val smallBlobs = Blob3DWrapper.getSmallestBlobs(blobs)
+        val movedBlobs = Blob3DWrapper.moveBlobs(blobs, movableBlobs)
+        Blob3DWrapper.mergeBlobs(movedBlobs, smallBlobs).asInstanceOf[BlobWrapper[B,C]]
+    }
+
   }
 
   private[blobs] def removeSmallestBlobs(blobs: Seq[Blob[C]]): Seq[Blob[C]] =
@@ -50,15 +59,15 @@ class Game[C <: Coord, B <: Blob[C]](coords: Seq[Coord], blobs: Seq[Blob[C]]) {
     }
   }
 
-  private[blobs] def mergeBlobs(blobs: Seq[Blob[C]]): Seq[Blob[C]] = {
-    blobs.groupBy(b => b.coord).map { case (_, clashBlobs) =>
-
-      val size = clashBlobs.map(_.size).sum
-      clashBlobs.head match {
-        case blob2D: Blob2D => blob2D.copy(size = size)
-        case blob3D: Blob3D => blob3D.copy(size = size)
-      }
-    }.toSeq.asInstanceOf[Seq[Blob[C]]]
-  }
+//  private[blobs] def mergeBlobs(blobs: Seq[Blob[C]]): BlobWrapper[B,C] = {
+//
+//    blobs.groupBy(b => b.coord).map { case (_, clashBlobs) =>
+//      val size = clashBlobs.map(_.size).sum
+//      clashBlobs.head match {
+//        case blob2D: Blob2D => blob2D.copy(size = size)
+//        case blob3D: Blob3D => blob3D.copy(size = size)
+//      }
+//    }.toSeq
+//  }
 
 }
