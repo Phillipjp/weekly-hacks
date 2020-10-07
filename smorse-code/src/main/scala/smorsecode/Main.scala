@@ -9,19 +9,29 @@ object Main {
     val wordList = source.getLines().toList
 
     val answerOne = challengeOne(wordList, 13)
+    println("CHALLENGE ONE")
     answerOne.foreach(println)
+    println()
 
     val answerTwo = challengeTwo(wordList, "---------------")
+    println("CHALLENGE TWO")
     answerTwo.foreach(println)
+    println()
 
     val answerThree = challengeThree(wordList, 21)
+    println("CHALLENGE THREE")
     answerThree.foreach(println)
+    println()
 
     val answerFour = challengeFour(wordList, 13)
+    println("CHALLENGE FOUR")
     answerFour.foreach(println)
+    println()
 
     val answerFive = challengeFive(wordList)
+    println("CHALLENGE FIVE")
     answerFive.foreach(println)
+    println()
   }
 
   def challengeOne(wordList: Seq[String], nWords: Int): Seq[(String, Seq[String])] = {
