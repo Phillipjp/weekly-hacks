@@ -1,12 +1,13 @@
 package cribbage
 
+import cribbage.Ranks.{Ace, Four, Three, Two}
+import cribbage.Suits.Spades
+
 object Main {
 
-  def add(x: Int, y: Int): Int = {
-    x + y
-  }
-
   def main(args: Array[String]): Unit = {
-    println(add(2, 3))
+    val cards = Seq(Card(Ace, Spades), Card(Three, Spades), Card(Four, Spades), Card(Two, Spades))
+    val sorted = cards.sortBy(_.rank.value)
+    println(sorted)
   }
 }
