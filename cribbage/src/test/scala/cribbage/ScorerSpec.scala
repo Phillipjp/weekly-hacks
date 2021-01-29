@@ -9,10 +9,33 @@ class ScorerSpec extends Matchers with AnyFlatSpecLike {
 
   behavior of "scoreForSummingToFifteen"
 
+  private val S2: Card = Card(Two, Spades)
+  private val S3: Card = Card(Three, Spades)
+  private val S4: Card = Card(Four, Spades)
+  private val S5: Card = Card(Five, Spades)
+  private val S6: Card = Card(Six, Spades)
+  private val S7: Card = Card(Seven, Spades)
+  private val S8: Card = Card(Eight, Spades)
+  private val S9: Card = Card(Nine, Spades)
+  private val S10: Card = Card(Ten, Spades)
+  private val SJ: Card = Card(Jack, Spades)
+  private val SQ: Card = Card(Queen, Spades)
+  private val SK: Card = Card(King, Spades)
+
+  private val C8: Card = Card(Eight, Clubs)
+  private val C5: Card = Card(Five, Clubs)
+  private val CQ: Card = Card(Queen, Clubs)
+  private val CK: Card = Card(King, Clubs)
+
+  private val D8: Card = Card(Eight, Diamonds)
+  private val D9: Card = Card(Nine, Diamonds)
+
+
   it should "correctly score for all the combinations that add to 15" in {
     // Given
-    val hand1 = Hand(Seq(Card(Seven, Spades), Card(Eight, Spades), Card(Three, Spades), Card(Four, Spades)), Card(Five, Spades))
-    val hand2 = Hand(Seq(Card(Five, Spades), Card(Ten, Spades), Card(Jack, Spades), Card(Queen, Spades)), Card(King, Spades))
+    val hand1 = Hand(Seq(S7, S8, S3, S4), S5)
+
+    val hand2 = Hand(Seq(S5, S10, SJ, SQ), SK)
 
     // When, Then
     Scorer.scoreForSummingToFifteen(hand1) shouldBe 6
@@ -20,12 +43,14 @@ class ScorerSpec extends Matchers with AnyFlatSpecLike {
 
   }
 
+
+
   it should "correctly score for all the runs within a hand" in {
     // Given
-    val hand1 = Hand(Seq(Card(Seven, Spades), Card(Eight, Spades), Card(Three, Spades), Card(Four, Spades)), Card(Five, Spades))
-    val hand2 = Hand(Seq(Card(Five, Spades), Card(Ten, Spades), Card(Jack, Spades), Card(Queen, Spades)), Card(King, Spades))
-    val hand3 = Hand(Seq(Card(Nine, Spades), Card(Ten, Spades), Card(Jack, Spades), Card(Queen, Spades)), Card(King, Spades))
-    val hand4 = Hand(Seq(Card(Two, Spades), Card(Four, Spades), Card(Six, Spades), Card(Eight, Spades)), Card(Ten, Spades))
+    val hand1 = Hand(Seq(S7, S8, S3, S4), S5)
+    val hand2 = Hand(Seq(S5, S10, S10, SQ), SK)
+    val hand3 = Hand(Seq(S9, S10, S10, SQ), SK)
+    val hand4 = Hand(Seq(S2, S4, S6, S8), S10)
 
     // When, Then
     Scorer.scoreForRuns(hand1) shouldBe 3
@@ -37,12 +62,14 @@ class ScorerSpec extends Matchers with AnyFlatSpecLike {
 
   it should "correctly score for all the pairs within a hand" in {
     // Given
-    val hand1 = Hand(Seq(Card(Eight, Clubs), Card(Eight, Spades), Card(Three, Spades), Card(Four, Spades)), Card(Five, Spades))
-    val hand2 = Hand(Seq(Card(Eight, Clubs), Card(Eight, Spades), Card(Eight, Diamonds), Card(Four, Spades)), Card(Five, Spades))
-    val hand3 = Hand(Seq(Card(Eight, Clubs), Card(Eight, Spades), Card(Eight, Diamonds), Card(Eight, Clubs)), Card(Five, Spades))
-    val hand4 = Hand(Seq(Card(Eight, Clubs), Card(Eight, Spades), Card(Eight, Diamonds), Card(Five, Clubs)), Card(Five, Spades))
-    val hand5 = Hand(Seq(Card(Eight, Clubs), Card(Eight, Spades), Card(Nine, Diamonds), Card(Five, Clubs)), Card(Five, Spades))
-    val hand6 = Hand(Seq(Card(Seven, Spades), Card(Eight, Spades), Card(Three, Spades), Card(Four, Spades)), Card(Five, Spades))
+    val hand1 = Hand(Seq(C8, S8, S3, S4), S5)
+
+    val hand2 = Hand(Seq(C8, S8, D8, S4), S5)
+    val hand3 = Hand(Seq(C8, S8, D8, C8), S5)
+    val hand4 = Hand(Seq(C8, S8, D8, C5), S5)
+
+    val hand5 = Hand(Seq(C8, S8, D9, C5), S5)
+    val hand6 = Hand(Seq(S7, S8, S3, Card(Four, Spades)), S5)
 
     // When, Then
     Scorer.scoreForPairs(hand1) shouldBe 2
@@ -54,11 +81,12 @@ class ScorerSpec extends Matchers with AnyFlatSpecLike {
 
   }
 
+
   it should "correctly score for a flush within a hand" in {
     // Given
-    val hand1 = Hand(Seq(Card(Seven, Spades), Card(Eight, Spades), Card(Three, Spades), Card(Four, Spades)), Card(Five, Spades))
-    val hand2 = Hand(Seq(Card(Five, Spades), Card(Ten, Spades), Card(Jack, Spades), Card(Queen, Spades)), Card(King, Clubs))
-    val hand3 = Hand(Seq(Card(Nine, Spades), Card(Ten, Spades), Card(Jack, Spades), Card(Queen, Clubs)), Card(King, Spades))
+    val hand1 = Hand(Seq(S7, S8, S3, S4), S5)
+    val hand2 = Hand(Seq(S5, S10, S10, SQ), CK)
+    val hand3 = Hand(Seq(S9, S10, S10, CQ), SK)
 
     // When, Then
     Scorer.scoreForFlush(hand1) shouldBe 5
@@ -69,11 +97,11 @@ class ScorerSpec extends Matchers with AnyFlatSpecLike {
 
   it should "correctly score for Nobs in a hand" in {
     // Given
-    val hand1 = Hand(Seq(Card(Seven, Spades), Card(Eight, Spades), Card(Three, Spades), Card(Jack, Spades)), Card(Five, Spades))
-    val hand2 = Hand(Seq(Card(Five, Spades), Card(Ten, Spades), Card(Six, Spades), Card(Jack, Spades)), Card(King, Clubs))
+    val hand1 = Hand(Seq(S7, S8, S3, S10), S5)
+    val hand2 = Hand(Seq(S5, S10, S6, S10), CK)
 
     // When, Then
-    Scorer.scoreForNobs(hand1) shouldBe -1
+    Scorer.scoreForNobs(hand1) shouldBe 1
     Scorer.scoreForNobs(hand2) shouldBe 0
 
   }
