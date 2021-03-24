@@ -18,7 +18,7 @@ object Scorer{
     2 * scoringCombos.length
   }
 
-  def scoreForRunLength(hand: Hand, runLength: Int): Int = {
+  private def scoreForRunLength(hand: Hand, runLength: Int): Int = {
     val cards = hand.cards :+ hand.faceUpCard
     val scoringRuns = cards.combinations(runLength).filter(c => c.sortBy(_.rank.order).sliding(runLength, 1).exists(isConsecutive))
     runLength * scoringRuns.length
@@ -77,7 +77,7 @@ object Scorer{
 
   def scoreForNobs(hand: Hand): Int = {
     if(hand.cards.contains(Card(Jack, hand.faceUpCard.suit))){
-      -1
+      1
     }
     else{
       0
