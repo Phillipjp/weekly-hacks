@@ -28,7 +28,7 @@ object TalkingClock {
       time.split(":").head.toInt < 24 &&
       time.split(":").head.toInt >= 0 &&
       time.split(":").last.toInt < 60 &&
-      time.split(":").last.toInt >= 0 &&
+      time.split(":").last.toInt >= 0
     ) {
 
       val splitTime = time.split(":")
