@@ -30,6 +30,15 @@ class MinuteToWordSpec extends AnyFlatSpecLike with Matchers {
     actual shouldBe expected
   }
 
+  it should "get the minute without a leading space when the minute is a multiple of 10" in {
+    val minutesAsNumbers = Seq("10", "20", "30", "40", "50")
+    val expected = Seq("ten", "twenty", "thirty", "forty", "fifty")
+    // When
+    val actual = minutesAsNumbers.map(MinuteToWord.get(_).get)
+    // Then
+    actual shouldBe expected
+  }
+
   it should "get None for an invalid minute" in {
     MinuteToWord.get("65") shouldBe None
   }

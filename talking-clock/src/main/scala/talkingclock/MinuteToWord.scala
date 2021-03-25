@@ -11,15 +11,15 @@ object MinuteToWord {
 
   private val unitMinuteToWord: Map[String, String] = Map(
     "0" -> "",
-    "1" -> "one",
-    "2" -> "two",
-    "3" -> "three",
-    "4" -> "four",
-    "5" -> "five",
-    "6" -> "six",
-    "7" -> "seven",
-    "8" -> "eight",
-    "9" -> "nine"
+    "1" -> " one",
+    "2" -> " two",
+    "3" -> " three",
+    "4" -> " four",
+    "5" -> " five",
+    "6" -> " six",
+    "7" -> " seven",
+    "8" -> " eight",
+    "9" -> " nine"
   )
 
   private val teenMinuteToWord: Map[String, String] = Map(
@@ -45,7 +45,7 @@ object MinuteToWord {
       Option("")
     else {
       (tensMinuteToWord.get(tensMinute), unitMinuteToWord.get(unitMinute)) match {
-        case (Some(tm), Some(um)) => Option(s"$tm $um")
+        case (Some(tm), Some(um)) => Option(s"$tm$um")
         case _ => None
       }
     }
