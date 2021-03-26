@@ -11,39 +11,13 @@ object TalkingClock {
 
     val splitTime = timeString.time.split(":")
 
-    val minutes = MinuteToWord.get(splitTime.last)
+    val minutes = MinuteToWordMap.get(splitTime.last)
 
     val timeIdentifier = getTimeIdentifier(splitTime.head.toInt)
 
     val list = List("It's", hourToWord(splitTime.head), minutes.getOrElse(""), timeIdentifier.getOrElse("")).filter(_ != "")
 
     list.mkString(" ")
-  }
-
-  def timeToSentence(time: String): Option[String] = {
-
-    val timePattern = "\\d\\d:\\d\\d".r
-
-    if(timePattern.pattern.matcher(time).matches() &&
-      time.split(":").head.toInt < 24 &&
-      time.split(":").head.toInt >= 0 &&
-      time.split(":").last.toInt < 60 &&
-      time.split(":").last.toInt >= 0
-    ) {
-
-      val splitTime = time.split(":")
-
-      val minutes = MinuteToWord.get(splitTime.last)
-
-      val timeIdentifier = getTimeIdentifier(splitTime.head.toInt)
-
-      val list = List("It's", hourToWord(splitTime.head), minutes.getOrElse(""), timeIdentifier.getOrElse("")).filter(_ != "")
-
-      Option(list.mkString(" "))
-    }
-    else{
-      None
-    }
   }
 
   private[talkingclock] def getTimeIdentifier(hoursAsNumber: Int): Option[String] = {

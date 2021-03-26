@@ -1,6 +1,6 @@
 package talkingclock
 
-object MinuteToWord {
+object MinuteToWordMap {
   private val tensMinuteToWord: Map[String, String] = Map(
     "0" -> "oh",
     "2" -> "twenty",

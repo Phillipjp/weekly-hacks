@@ -25,7 +25,7 @@ object Main {
 
       val formattedTime = localTime.format(formatter)
 
-      val sentence = timeToSentence(formattedTime).getOrElse("Invalid Time")
+      val sentence = timeToSentence(TimeString(formattedTime))
       println(sentence)
       val minute = localTime.getMinute
       if(minute == 0 || minute%15 == 0 ) {
